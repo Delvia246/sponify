@@ -9,11 +9,12 @@ Sponify adalah aplikasi pemutar musik yang meniru UI/UX Spotify. Pengguna dapat 
 
 ## Anggota Kelompok
 
-| Nama | NIM |
-|------|-----|
-| Delvia | 224xxxxxxx |
-| Anggota 2 | NIM 2 |
-| Anggota 3 | NIM 3 |
+| No | Nama | NIM |
+|----|------|-----|
+| 1 | Reza Mortasefi | 24051214220 |
+| 2 | Delvia Nabila Aurelia Erwant | 24051214246 |
+| 3 | Arvy Revaldy | 24051214227 |
+| 4 | Naufal Daffa Wimasurya | 24051214216 |
 
 ## Tech Stack
 
