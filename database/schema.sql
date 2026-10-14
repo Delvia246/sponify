@@ -1,0 +1,71 @@
+-- Schema Database Sponify (MySQL Version)
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS liked_songs;
+DROP TABLE IF EXISTS playlist_songs;
+DROP TABLE IF EXISTS playlists;
+DROP TABLE IF EXISTS songs;
+DROP TABLE IF EXISTS albums;
+DROP TABLE IF EXISTS artists;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE artists (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    image_url VARCHAR(255)
+) ENGINE=InnoDB;
+
+CREATE TABLE albums (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    artist_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    cover_url VARCHAR(255),
+    release_year INT,
+    FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE songs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    album_id INT NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    duration INT NOT NULL,
+    audio_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (album_id) REFERENCES albums(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE playlists (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE playlist_songs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    playlist_id INT NOT NULL,
+    song_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (playlist_id) REFERENCES playlists(id) ON DELETE CASCADE,
+    FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE liked_songs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    song_id INT NOT NULL,
+    liked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (user_id, song_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
