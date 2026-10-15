@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../services/player_service.dart';
 import '../services/liked_service.dart';
 import '../services/session_service.dart';
+import '../widgets/music_visualizer.dart';
 import 'lyrics_screen.dart';
 
 class FullPlayerScreen extends StatefulWidget {
@@ -194,7 +195,19 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+
+                // ===== MUSIC VISUALIZER =====
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: const MusicVisualizer(
+                    barCount: 32,
+                    height: 50,
+                    color: Color(0xFF1DB954),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
 
                 // ===== JUDUL & ARTIS + LIKE =====
                 Padding(
@@ -244,7 +257,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
                 // ===== PROGRESS SLIDER =====
                 StreamBuilder<Duration>(
@@ -309,7 +322,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   },
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 // ===== KONTROL UTAMA =====
                 Padding(
@@ -362,7 +375,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
                 // ===== TOMBOL LIRIK =====
                 Padding(
