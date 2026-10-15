@@ -1,92 +1,192 @@
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
+
 import '../models/song.dart';
+import 'history_service.dart';
+
+enum PlayerRepeatMode { off, all, one }
 
 class PlayerService extends ChangeNotifier {
   static final PlayerService _instance = PlayerService._internal();
   factory PlayerService() => _instance;
   PlayerService._internal();
 
-  final AudioPlayer _player = AudioPlayer();
-  List<Song> _playlist = [];
-  int _currentIndex = -1;
+  final AudioPlayer player = AudioPlayer();
 
-  // Getter
-  AudioPlayer get player => _player;
+  List<Song> _playlist = [];
+  int _currentIndex = 0;
+
+  bool _isShuffle = false;
+  PlayerRepeatMode _repeatMode = PlayerRepeatMode.off;
+
+  // ============================================
+  // GETTERS
+  // ============================================
   List<Song> get playlist => _playlist;
+  int get currentIndex => _currentIndex;
   Song? get currentSong =>
       (_currentIndex >= 0 && _currentIndex < _playlist.length)
-          ? _playlist[_currentIndex]
-          : null;
-  bool get isPlaying => _player.playing;
-  Stream<Duration> get positionStream => _player.positionStream;
-  Stream<Duration?> get durationStream => _player.durationStream;
+      ? _playlist[_currentIndex]
+      : null;
 
-  // Set seluruh playlist, mulai dari index tertentu
+  bool get isPlaying => player.playing;
+  bool get isShuffle => _isShuffle;
+  PlayerRepeatMode get repeatMode => _repeatMode;
+
+  Stream<Duration> get positionStream => player.positionStream;
+  Stream<Duration?> get durationStream => player.durationStream;
+
+  // ============================================
+  // PLAY PLAYLIST
+  // ============================================
   Future<void> playPlaylist(List<Song> songs, int startIndex) async {
-    _playlist = songs;
-    _currentIndex = startIndex;
-    notifyListeners();
-    await _playCurrent();
-  }
+    if (songs.isEmpty) return;
 
-  // Play satu lagu saja
-  Future<void> playSingle(Song song) async {
-    _playlist = [song];
-    _currentIndex = 0;
-    notifyListeners();
-    await _playCurrent();
-  }
-
-  Future<void> _playCurrent() async {
-    final song = currentSong;
-    if (song == null) return;
-    try {
-      await _player.setUrl(song.audioUrl);
-      _player.play();
+    if (_playlist.length == songs.length &&
+        _currentIndex == startIndex &&
+        currentSong?.id == songs[startIndex].id) {
+      if (!player.playing) await player.play();
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error play: $e');
+      return;
     }
+
+    _playlist = List.from(songs);
+    _currentIndex = startIndex;
+
+    try {
+      await player.setUrl(_playlist[_currentIndex].audioUrl);
+      await player.play();
+      // Simpan ke history
+      await HistoryService.addSong(_playlist[_currentIndex]);
+    } catch (e) {
+      debugPrint('Error playPlaylist: $e');
+    }
+    notifyListeners();
   }
 
+  // ============================================
+  // TOGGLE PLAY / PAUSE
+  // ============================================
   Future<void> togglePlayPause() async {
-    if (_player.playing) {
-      await _player.pause();
+    if (player.playing) {
+      await player.pause();
     } else {
-      if (_player.audioSource == null) {
-        await _playCurrent();
-      } else {
-        _player.play();
+      await player.play();
+    }
+    notifyListeners();
+  }
+
+  // ============================================
+  // NEXT
+  // ============================================
+  Future<void> next() async {
+    if (_playlist.isEmpty) return;
+
+    if (_repeatMode == PlayerRepeatMode.one) {
+      await player.seek(Duration.zero);
+      await player.play();
+      notifyListeners();
+      return;
+    }
+
+    if (_isShuffle && _playlist.length > 1) {
+      int randomIndex;
+      do {
+        randomIndex = DateTime.now().millisecondsSinceEpoch % _playlist.length;
+      } while (randomIndex == _currentIndex);
+      _currentIndex = randomIndex;
+    } else {
+      _currentIndex++;
+      if (_currentIndex >= _playlist.length) {
+        if (_repeatMode == PlayerRepeatMode.all) {
+          _currentIndex = 0;
+        } else {
+          _currentIndex = _playlist.length - 1;
+          await player.pause();
+          notifyListeners();
+          return;
+        }
       }
     }
+
+    try {
+      await player.setUrl(_playlist[_currentIndex].audioUrl);
+      await player.play();
+      // Simpan ke history
+      await HistoryService.addSong(_playlist[_currentIndex]);
+    } catch (e) {
+      debugPrint('Error next: $e');
+    }
     notifyListeners();
   }
 
-  Future<void> next() async {
-    if (_currentIndex < _playlist.length - 1) {
-      _currentIndex++;
-      notifyListeners();
-      await _playCurrent();
-    }
-  }
-
+  // ============================================
+  // PREVIOUS
+  // ============================================
   Future<void> previous() async {
-    if (_currentIndex > 0) {
-      _currentIndex--;
-      notifyListeners();
-      await _playCurrent();
+    if (_playlist.isEmpty) return;
+
+    if (player.position.inSeconds > 3) {
+      await player.seek(Duration.zero);
+      return;
     }
-  }
 
-  Future<void> seek(Duration position) async {
-    await _player.seek(position);
-  }
+    if (_isShuffle && _playlist.length > 1) {
+      int randomIndex;
+      do {
+        randomIndex = DateTime.now().millisecondsSinceEpoch % _playlist.length;
+      } while (randomIndex == _currentIndex);
+      _currentIndex = randomIndex;
+    } else {
+      _currentIndex--;
+      if (_currentIndex < 0) {
+        _currentIndex = _playlist.length - 1;
+      }
+    }
 
-  Future<void> stop() async {
-    await _player.stop();
-    _playlist = [];
-    _currentIndex = -1;
+    try {
+      await player.setUrl(_playlist[_currentIndex].audioUrl);
+      await player.play();
+      // Simpan ke history
+      await HistoryService.addSong(_playlist[_currentIndex]);
+    } catch (e) {
+      debugPrint('Error previous: $e');
+    }
     notifyListeners();
+  }
+
+  // ============================================
+  // SEEK
+  // ============================================
+  Future<void> seek(Duration position) async {
+    await player.seek(position);
+  }
+
+  // ============================================
+  // SHUFFLE
+  // ============================================
+  void toggleShuffle() {
+    _isShuffle = !_isShuffle;
+    notifyListeners();
+  }
+
+  // ============================================
+  // REPEAT
+  // ============================================
+  void cycleRepeat() {
+    if (_repeatMode == PlayerRepeatMode.off) {
+      _repeatMode = PlayerRepeatMode.all;
+    } else if (_repeatMode == PlayerRepeatMode.all) {
+      _repeatMode = PlayerRepeatMode.one;
+    } else {
+      _repeatMode = PlayerRepeatMode.off;
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
   }
 }

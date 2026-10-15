@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'home_tab.dart';
 import 'search_tab.dart';
 import 'library_tab.dart';
@@ -39,16 +40,14 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           const MiniPlayer(),
           Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFF000000),
-            ),
+            decoration: const BoxDecoration(color: Color(0xFF000000)),
             child: SafeArea(
               top: false,
               child: BottomNavigationBar(
                 currentIndex: _currentIndex,
                 onTap: (index) async {
                   if (index == 4) {
-                    await _showCreatePlaylistDialog();
+                    await _showCreateSheet();
                     return;
                   }
                   setState(() => _currentIndex = index);
@@ -56,28 +55,29 @@ class _MainScreenState extends State<MainScreen> {
                 backgroundColor: const Color(0xFF000000),
                 selectedItemColor: Colors.white,
                 unselectedItemColor: const Color(0xFFB3B3B3),
-                selectedFontSize: 10,
-                unselectedFontSize: 10,
+                selectedFontSize: 9,
+                unselectedFontSize: 9,
+                iconSize: 22,
                 type: BottomNavigationBarType.fixed,
                 items: const [
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.home_filled),
+                    icon: Icon(Icons.home_filled, size: 22),
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.search),
+                    icon: Icon(Icons.search, size: 22),
                     label: 'Search',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.library_music_outlined),
-                    label: 'Your Library',
+                    icon: Icon(Icons.library_music_outlined, size: 22),
+                    label: 'Library',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.workspace_premium_outlined),
+                    icon: Icon(Icons.workspace_premium_outlined, size: 22),
                     label: 'Premium',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.add_box_outlined),
+                    icon: Icon(Icons.add_box_outlined, size: 22),
                     label: 'Create',
                   ),
                 ],
@@ -85,6 +85,155 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showCreateSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => GestureDetector(
+        onTap: () => Navigator.pop(sheetContext),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: Colors.transparent,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 430),
+              child: GestureDetector(
+                onTap: () {},
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF1F1F1F),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                    ),
+                    child: SafeArea(
+                      top: false,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 4,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[600],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          _sheetOption(
+                            sheetContext,
+                            icon: Icons.music_note,
+                            title: 'Playlist',
+                            subtitle: 'Buat playlist berisi lagu atau episode',
+                            onTap: () async {
+                              Navigator.pop(sheetContext);
+                              await _showCreatePlaylistDialog();
+                            },
+                          ),
+                          _sheetOption(
+                            sheetContext,
+                            icon: Icons.people_alt,
+                            title: 'Playlist kolaboratif',
+                            subtitle: 'Buat playlist bersama teman',
+                            onTap: () {
+                              Navigator.pop(sheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Fitur playlist kolaboratif segera hadir',
+                                  ),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                          _sheetOption(
+                            sheetContext,
+                            icon: Icons.compare_arrows,
+                            title: 'Blend',
+                            subtitle: 'Satukan selera musik teman-temanmu dalam sebuah playlist',
+                            onTap: () {
+                              Navigator.pop(sheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Fitur blend segera hadir'),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _sheetOption(
+    BuildContext sheetContext, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF2A2A2A),
+              ),
+              child: Icon(icon, color: Colors.white, size: 22),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -142,8 +291,10 @@ class _MainScreenState extends State<MainScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Buat',
-                style: TextStyle(color: Color(0xFF1DB954))),
+            child: const Text(
+              'Buat',
+              style: TextStyle(color: Color(0xFF1DB954)),
+            ),
           ),
         ],
       ),
@@ -168,9 +319,9 @@ class _MainScreenState extends State<MainScreen> {
         setState(() => _currentIndex = 2);
         _libraryKey.currentState?.reload();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gagal bikin playlist')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Gagal bikin playlist')));
       }
     }
   }
