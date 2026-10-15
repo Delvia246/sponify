@@ -6,12 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendResponse(false, "Metode tidak diizinkan", null, 405);
 }
 
-// Query join untuk ambil lagu sekaligus info album dan artisnya
 $query = "SELECT 
             songs.id, 
             songs.title, 
             songs.duration, 
             songs.audio_url,
+            songs.lyrics,
             albums.title AS album,
             albums.cover_url,
             artists.name AS artist

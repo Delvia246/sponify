@@ -6,6 +6,7 @@ class Song {
   final String album;
   final String coverUrl;
   final String artist;
+  final String lyrics;
 
   Song({
     required this.id,
@@ -15,6 +16,7 @@ class Song {
     required this.album,
     required this.coverUrl,
     required this.artist,
+    required this.lyrics,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class Song {
       album: json['album'].toString(),
       coverUrl: json['cover_url'].toString(),
       artist: json['artist'].toString(),
+      lyrics: (json['lyrics'] ?? '').toString(),
     );
   }
 

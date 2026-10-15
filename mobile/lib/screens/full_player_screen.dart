@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../services/player_service.dart';
 import '../services/liked_service.dart';
 import '../services/session_service.dart';
+import 'lyrics_screen.dart';
 
 class FullPlayerScreen extends StatefulWidget {
   const FullPlayerScreen({super.key});
@@ -19,7 +20,6 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
   void initState() {
     super.initState();
     _checkLiked();
-    // Listen ke perubahan lagu
     PlayerService().addListener(_onSongChanged);
   }
 
@@ -194,7 +194,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 32),
 
                 // ===== JUDUL & ARTIS + LIKE =====
                 Padding(
@@ -228,7 +228,6 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                           ],
                         ),
                       ),
-                      // Tombol Like
                       IconButton(
                         iconSize: 30,
                         onPressed: _toggleLike,
@@ -245,7 +244,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 // ===== PROGRESS SLIDER =====
                 StreamBuilder<Duration>(
@@ -310,7 +309,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   },
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // ===== KONTROL UTAMA =====
                 Padding(
@@ -363,7 +362,42 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   ),
                 ),
 
-                const Spacer(flex: 2),
+                const SizedBox(height: 20),
+
+                // ===== TOMBOL LIRIK =====
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LyricsScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.lyrics_outlined,
+                        color: Colors.white, size: 22),
+                    label: const Text(
+                      'Lirik',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      backgroundColor: const Color(0xFF282828),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const Spacer(flex: 1),
               ],
             ),
           ),
