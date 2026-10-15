@@ -9,6 +9,7 @@ import 'profile_screen.dart';
 import 'login_screen.dart';
 import 'liked_songs_screen.dart';
 import 'stats_screen.dart';
+import 'mood_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -498,6 +499,16 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  // ============ FITUR 6: Mood ============
+  void _openMood() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MoodScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -647,7 +658,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
 
-                    // === GRID (Liked Songs + Trending bisa dipencet) ===
+                    // === GRID (4 kartu bisa dipencet) ===
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -673,8 +684,11 @@ class _HomeTabState extends State<HomeTab> {
                               child: _quickCard('Statistik',
                                   const Color(0xFFFF5722), Icons.trending_up),
                             ),
-                            _quickCard('Discover', const Color(0xFF9C27B0),
-                                Icons.explore),
+                            GestureDetector(
+                              onTap: _openMood,
+                              child: _quickCard('Mood',
+                                  const Color(0xFF9C27B0), Icons.mood),
+                            ),
                             _quickCard('New Releases', const Color(0xFF4CAF50),
                                 Icons.new_releases),
                           ],
