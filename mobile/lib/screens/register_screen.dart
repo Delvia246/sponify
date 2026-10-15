@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/session_service.dart';
+import '../widgets/phone_frame.dart';
+import 'main_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -26,22 +29,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password minimal 6 karakter')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
-    final success = await AuthService().register(username, email, password);
+    final user = await AuthService().register(username, email, password);
 
     setState(() => _isLoading = false);
 
     if (!mounted) return;
 
-    if (success) {
+    if (user != null) {
+      // Simpan session
+      await SessionService.saveUser(user);
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registrasi berhasil! Silakan login.')),
+        const SnackBar(
+          content: Text('Registrasi berhasil! Selamat datang di Sponify.'),
+          backgroundColor: Color(0xFF1DB954),
+        ),
       );
-      Navigator.pop(context);
+
+      // Auto-login: langsung masuk MainScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => phoneWrap(const MainScreen()),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registrasi gagal. Email/username mungkin sudah dipakai.')),
+        const SnackBar(
+          content: Text(
+              'Registrasi gagal. Email atau username mungkin sudah dipakai.'),
+        ),
       );
     }
   }
@@ -71,7 +98,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Input Username
               TextField(
                 controller: _usernameController,
                 style: const TextStyle(color: Colors.white),
@@ -88,7 +114,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Input Email
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -106,13 +131,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Input Password
               TextField(
                 controller: _passwordController,
                 obscureText: true,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: 'Password (min. 6 karakter)',
                   labelStyle: const TextStyle(color: Colors.grey),
                   filled: true,
                   fillColor: const Color(0xFF282828),
@@ -124,7 +148,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Tombol Register
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(
