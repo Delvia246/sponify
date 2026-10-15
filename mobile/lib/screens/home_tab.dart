@@ -8,6 +8,7 @@ import '../widgets/phone_frame.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
 import 'liked_songs_screen.dart';
+import 'stats_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -487,6 +488,16 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  // ============ FITUR 5: Stats ============
+  void _openStats() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const StatsScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -636,7 +647,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
 
-                    // === GRID (Liked Songs sekarang bisa dipencet) ===
+                    // === GRID (Liked Songs + Trending bisa dipencet) ===
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -657,8 +668,11 @@ class _HomeTabState extends State<HomeTab> {
                                 Icons.radio),
                             _quickCard('Chill Vibes', const Color(0xFF00BCD4),
                                 Icons.nightlight_round),
-                            _quickCard('Trending', const Color(0xFFFF5722),
-                                Icons.trending_up),
+                            GestureDetector(
+                              onTap: _openStats,
+                              child: _quickCard('Statistik',
+                                  const Color(0xFFFF5722), Icons.trending_up),
+                            ),
                             _quickCard('Discover', const Color(0xFF9C27B0),
                                 Icons.explore),
                             _quickCard('New Releases', const Color(0xFF4CAF50),
