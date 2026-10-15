@@ -95,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final result = await showDialog<bool>(
       context: context,
+      useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
         title: const Text(

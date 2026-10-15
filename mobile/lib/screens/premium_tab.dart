@@ -64,6 +64,7 @@ class _PremiumTabState extends State<PremiumTab> {
     final plan = _plans[_selectedPlan];
     showDialog(
       context: context,
+      useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
         title: const Text(

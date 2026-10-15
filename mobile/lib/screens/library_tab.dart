@@ -72,6 +72,7 @@ class LibraryTabState extends State<LibraryTab>
 
     final result = await showDialog<bool>(
       context: context,
+      useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
         title: const Text(

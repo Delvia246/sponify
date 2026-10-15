@@ -48,6 +48,7 @@ class _HomeTabState extends State<HomeTab> {
   void _showListeningActivity() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: false,
       backgroundColor: const Color(0xFF282828),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -177,6 +178,7 @@ class _HomeTabState extends State<HomeTab> {
   void _showNewReleases() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: false,
       backgroundColor: const Color(0xFF121212),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -339,6 +341,7 @@ class _HomeTabState extends State<HomeTab> {
   void _showProfileMenu() {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: false,
       backgroundColor: const Color(0xFF282828),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -424,6 +427,7 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> _handleLogout() async {
     final confirm = await showDialog<bool>(
       context: context,
+      useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
         title: const Text('Keluar', style: TextStyle(color: Colors.white)),
