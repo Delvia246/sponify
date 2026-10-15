@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../models/song.dart';
+import 'session_service.dart';
 
 class PlayerService extends ChangeNotifier {
   static final PlayerService _instance = PlayerService._internal();
@@ -10,6 +13,7 @@ class PlayerService extends ChangeNotifier {
   final AudioPlayer _player = AudioPlayer();
   List<Song> _playlist = [];
   int _currentIndex = -1;
+  static const String baseUrl = 'http://localhost/sponify/backend/api/';
 
   // Getter
   AudioPlayer get player => _player;
@@ -22,7 +26,7 @@ class PlayerService extends ChangeNotifier {
   Stream<Duration> get positionStream => _player.positionStream;
   Stream<Duration?> get durationStream => _player.durationStream;
 
-  // Set seluruh playlist, mulai dari index tertentu
+  // Play seluruh playlist mulai dari index tertentu
   Future<void> playPlaylist(List<Song> songs, int startIndex) async {
     _playlist = songs;
     _currentIndex = startIndex;
@@ -45,8 +49,29 @@ class PlayerService extends ChangeNotifier {
       await _player.setUrl(song.audioUrl);
       _player.play();
       notifyListeners();
+      // Catat ke listening history
+      _recordHistory(song.id);
     } catch (e) {
       debugPrint('Error play: $e');
+    }
+  }
+
+  // Kirim log ke backend (fire and forget)
+  Future<void> _recordHistory(int songId) async {
+    try {
+      final user = await SessionService.getUser();
+      if (user == null) return;
+
+      await http.post(
+        Uri.parse('${baseUrl}record_history.php'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': user.id,
+          'song_id': songId,
+        }),
+      );
+    } catch (e) {
+      debugPrint('Error record history: $e');
     }
   }
 
