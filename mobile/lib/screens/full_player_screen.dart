@@ -1,9 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../services/player_service.dart';
+import '../services/liked_service.dart';
+import '../services/session_service.dart';
 
-class FullPlayerScreen extends StatelessWidget {
+class FullPlayerScreen extends StatefulWidget {
   const FullPlayerScreen({super.key});
+
+  @override
+  State<FullPlayerScreen> createState() => _FullPlayerScreenState();
+}
+
+class _FullPlayerScreenState extends State<FullPlayerScreen> {
+  bool _isLiked = false;
+  int? _currentSongId;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLiked();
+    // Listen ke perubahan lagu
+    PlayerService().addListener(_onSongChanged);
+  }
+
+  @override
+  void dispose() {
+    PlayerService().removeListener(_onSongChanged);
+    super.dispose();
+  }
+
+  void _onSongChanged() {
+    final song = PlayerService().currentSong;
+    if (song != null && song.id != _currentSongId) {
+      _checkLiked();
+    }
+  }
+
+  Future<void> _checkLiked() async {
+    final song = PlayerService().currentSong;
+    if (song == null) return;
+
+    final user = await SessionService.getUser();
+    final userId = user?.id ?? 1;
+
+    final liked = await LikedService().isLiked(userId, song.id);
+    if (!mounted) return;
+    setState(() {
+      _isLiked = liked;
+      _currentSongId = song.id;
+    });
+  }
+
+  Future<void> _toggleLike() async {
+    final song = PlayerService().currentSong;
+    if (song == null) return;
+
+    final user = await SessionService.getUser();
+    final userId = user?.id ?? 1;
+
+    final result = await LikedService().toggleLike(userId, song.id);
+    if (!mounted) return;
+
+    if (result != null) {
+      setState(() => _isLiked = result);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              result ? 'Ditambahkan ke Liked Songs' : 'Dihapus dari Liked Songs'),
+          duration: const Duration(seconds: 1),
+          backgroundColor:
+              result ? const Color(0xFF1DB954) : const Color(0xFF282828),
+        ),
+      );
+    }
+  }
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString();
@@ -158,15 +228,18 @@ class FullPlayerScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                      // Tombol Like
                       IconButton(
-                        icon: const Icon(Icons.favorite_border,
-                            color: Colors.white, size: 26),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Fitur like segera hadir')),
-                          );
-                        },
+                        iconSize: 30,
+                        onPressed: _toggleLike,
+                        icon: Icon(
+                          _isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: _isLiked
+                              ? const Color(0xFF1DB954)
+                              : Colors.white,
+                        ),
                       ),
                     ],
                   ),

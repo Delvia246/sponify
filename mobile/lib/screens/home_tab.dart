@@ -7,6 +7,7 @@ import '../services/session_service.dart';
 import '../widgets/phone_frame.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
+import 'liked_songs_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -45,7 +46,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   // ============ FITUR 1: Activity Modal ============
-    void _showListeningActivity() {
+  void _showListeningActivity() {
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
@@ -123,7 +124,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
-  
+
   Widget _activityRow() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -181,7 +182,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   // ============ FITUR 2: Notification Panel ============
-    void _showNewReleases() {
+  void _showNewReleases() {
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
@@ -259,6 +260,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
+
   Widget _buildNewReleases() {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -346,7 +348,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   // ============ FITUR 3: Profile Dropdown Menu ============
-    void _showProfileMenu() {
+  void _showProfileMenu() {
     showModalBottomSheet(
       context: context,
       useRootNavigator: false,
@@ -475,6 +477,16 @@ class _HomeTabState extends State<HomeTab> {
     await PlayerService().playPlaylist(_songs, index);
   }
 
+  // ============ FITUR 4: Liked Songs ============
+  void _openLikedSongs() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LikedSongsScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -505,7 +517,6 @@ class _HomeTabState extends State<HomeTab> {
                           children: [
                             Row(
                               children: [
-                                // Logo Sponify
                                 Row(
                                   children: [
                                     Container(
@@ -534,14 +545,12 @@ class _HomeTabState extends State<HomeTab> {
                                   ],
                                 ),
                                 const Spacer(),
-                                // Ikon Lonceng (Notifikasi)
                                 IconButton(
                                   iconSize: 24,
                                   icon: const Icon(Icons.notifications_none,
                                       color: Colors.white),
                                   onPressed: _showNewReleases,
                                 ),
-                                // Ikon 3 Orang (Activity)
                                 IconButton(
                                   iconSize: 24,
                                   icon: const Icon(Icons.people_outline,
@@ -549,7 +558,6 @@ class _HomeTabState extends State<HomeTab> {
                                   onPressed: _showListeningActivity,
                                 ),
                                 const SizedBox(width: 4),
-                                // Avatar (Profile Dropdown)
                                 GestureDetector(
                                   onTap: _showProfileMenu,
                                   child: Container(
@@ -628,7 +636,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
 
-                    // === GRID ===
+                    // === GRID (Liked Songs sekarang bisa dipencet) ===
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -640,8 +648,11 @@ class _HomeTabState extends State<HomeTab> {
                           crossAxisSpacing: 8,
                           childAspectRatio: 3.5,
                           children: [
-                            _quickCard('Liked Songs', const Color(0xFF4B22F4),
-                                Icons.favorite),
+                            GestureDetector(
+                              onTap: _openLikedSongs,
+                              child: _quickCard('Liked Songs',
+                                  const Color(0xFF4B22F4), Icons.favorite),
+                            ),
                             _quickCard('Daily Mix 1', const Color(0xFFE91E63),
                                 Icons.radio),
                             _quickCard('Chill Vibes', const Color(0xFF00BCD4),
