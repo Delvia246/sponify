@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/session_service.dart';
-import '../widgets/phone_frame.dart';
 import 'main_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -45,7 +44,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (user != null) {
-      // Simpan session
       await SessionService.saveUser(user);
       if (!mounted) return;
 
@@ -56,12 +54,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
 
-      // Auto-login: langsung masuk MainScreen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => phoneWrap(const MainScreen()),
-        ),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
