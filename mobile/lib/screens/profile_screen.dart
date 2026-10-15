@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/session_service.dart';
+import '../widgets/phone_frame.dart';
 import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -62,7 +63,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(
+            builder: (context) => phoneWrap(const LoginScreen())),
         (route) => false,
       );
     }
