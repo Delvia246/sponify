@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/phone_frame.dart';
 import '../services/auth_service.dart';
 import '../services/session_service.dart';
 import 'register_screen.dart';
@@ -37,13 +36,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
 
     if (user != null) {
-      // Simpan data user ke session
       await SessionService.saveUser(user);
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => phoneWrap(const MainScreen())),
+        MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -79,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 48),
 
-              // Input Email
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -97,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Input Password
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -115,7 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Tombol Login
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleLogin,
                 style: ElevatedButton.styleFrom(
@@ -145,14 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Link ke Register
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => phoneWrap(const RegisterScreen()),
-                    ),
+                        builder: (context) => const RegisterScreen()),
                   );
                 },
                 child: const Text(

@@ -5,7 +5,6 @@ import '../models/artist.dart';
 import '../models/album.dart';
 import '../services/library_service.dart';
 import '../services/session_service.dart';
-import '../widgets/phone_frame.dart';
 import 'playlist_detail_screen.dart';
 
 class LibraryTab extends StatefulWidget {
@@ -43,7 +42,6 @@ class LibraryTabState extends State<LibraryTab>
     super.dispose();
   }
 
-  // Method publik biar bisa dipanggil dari MainScreen
   Future<void> reload() async {
     await _loadAll();
   }
@@ -72,6 +70,7 @@ class LibraryTabState extends State<LibraryTab>
 
     final result = await showDialog<bool>(
       context: context,
+      useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
         title: const Text(
@@ -160,7 +159,6 @@ class LibraryTabState extends State<LibraryTab>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // === HEADER ===
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
               child: Row(
@@ -193,7 +191,6 @@ class LibraryTabState extends State<LibraryTab>
               ),
             ),
 
-            // === FILTER CHIPS ===
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -223,7 +220,6 @@ class LibraryTabState extends State<LibraryTab>
 
             const SizedBox(height: 12),
 
-            // === BODY ===
             Expanded(
               child: _isLoading
                   ? const Center(
@@ -245,7 +241,6 @@ class LibraryTabState extends State<LibraryTab>
     );
   }
 
-  // === TAB PLAYLIST ===
   Widget _buildPlaylists() {
     if (_playlists.isEmpty) {
       return const Center(
@@ -290,11 +285,9 @@ class LibraryTabState extends State<LibraryTab>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => phoneWrap(
-                  PlaylistDetailScreen(
-                    playlistId: p.id,
-                    playlistName: p.name,
-                  ),
+                builder: (context) => PlaylistDetailScreen(
+                  playlistId: p.id,
+                  playlistName: p.name,
                 ),
               ),
             );
@@ -304,7 +297,6 @@ class LibraryTabState extends State<LibraryTab>
     );
   }
 
-  // === TAB ARTIS ===
   Widget _buildArtists() {
     if (_artists.isEmpty) {
       return const Center(
@@ -362,7 +354,6 @@ class LibraryTabState extends State<LibraryTab>
     );
   }
 
-  // === TAB ALBUM ===
   Widget _buildAlbums() {
     if (_albums.isEmpty) {
       return const Center(

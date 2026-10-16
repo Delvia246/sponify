@@ -1,9 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../services/player_service.dart';
+import '../services/liked_service.dart';
+import '../services/session_service.dart';
+import '../widgets/music_visualizer.dart';
+import 'lyrics_screen.dart';
 
-class FullPlayerScreen extends StatelessWidget {
+class FullPlayerScreen extends StatefulWidget {
   const FullPlayerScreen({super.key});
+
+  @override
+  State<FullPlayerScreen> createState() => _FullPlayerScreenState();
+}
+
+class _FullPlayerScreenState extends State<FullPlayerScreen> {
+  bool _isLiked = false;
+  int? _currentSongId;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLiked();
+    PlayerService().addListener(_onSongChanged);
+  }
+
+  @override
+  void dispose() {
+    PlayerService().removeListener(_onSongChanged);
+    super.dispose();
+  }
+
+  void _onSongChanged() {
+    final song = PlayerService().currentSong;
+    if (song != null && song.id != _currentSongId) {
+      _checkLiked();
+    }
+  }
+
+  Future<void> _checkLiked() async {
+    final song = PlayerService().currentSong;
+    if (song == null) return;
+
+    final user = await SessionService.getUser();
+    final userId = user?.id ?? 1;
+
+    final liked = await LikedService().isLiked(userId, song.id);
+    if (!mounted) return;
+    setState(() {
+      _isLiked = liked;
+      _currentSongId = song.id;
+    });
+  }
+
+  Future<void> _toggleLike() async {
+    final song = PlayerService().currentSong;
+    if (song == null) return;
+
+    final user = await SessionService.getUser();
+    final userId = user?.id ?? 1;
+
+    final result = await LikedService().toggleLike(userId, song.id);
+    if (!mounted) return;
+
+    if (result != null) {
+      setState(() => _isLiked = result);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              result ? 'Ditambahkan ke Liked Songs' : 'Dihapus dari Liked Songs'),
+          duration: const Duration(seconds: 1),
+          backgroundColor:
+              result ? const Color(0xFF1DB954) : const Color(0xFF282828),
+        ),
+      );
+    }
+  }
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString();
@@ -124,7 +195,19 @@ class FullPlayerScreen extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
+
+                // ===== MUSIC VISUALIZER =====
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: const MusicVisualizer(
+                    barCount: 32,
+                    height: 50,
+                    color: Color(0xFF1DB954),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
 
                 // ===== JUDUL & ARTIS + LIKE =====
                 Padding(
@@ -159,20 +242,22 @@ class FullPlayerScreen extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.favorite_border,
-                            color: Colors.white, size: 26),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Fitur like segera hadir')),
-                          );
-                        },
+                        iconSize: 30,
+                        onPressed: _toggleLike,
+                        icon: Icon(
+                          _isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: _isLiked
+                              ? const Color(0xFF1DB954)
+                              : Colors.white,
+                        ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 // ===== PROGRESS SLIDER =====
                 StreamBuilder<Duration>(
@@ -237,7 +322,7 @@ class FullPlayerScreen extends StatelessWidget {
                   },
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
                 // ===== KONTROL UTAMA =====
                 Padding(
@@ -290,7 +375,42 @@ class FullPlayerScreen extends StatelessWidget {
                   ),
                 ),
 
-                const Spacer(flex: 2),
+                const SizedBox(height: 16),
+
+                // ===== TOMBOL LIRIK =====
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LyricsScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.lyrics_outlined,
+                        color: Colors.white, size: 22),
+                    label: const Text(
+                      'Lirik',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      backgroundColor: const Color(0xFF282828),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const Spacer(flex: 1),
               ],
             ),
           ),

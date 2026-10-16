@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-/// Helper: bungkus halaman dengan frame HP kalau di Web.
-/// Di Android/iOS asli, fungsi ini cuma return layar aslinya.
 Widget phoneWrap(Widget screen) {
   if (!kIsWeb) return screen;
   return PhoneFrame(child: screen);
@@ -42,7 +40,12 @@ class PhoneFrame extends StatelessWidget {
                     size: Size(390, 844),
                     devicePixelRatio: 1.0,
                   ),
-                  child: child,
+                  // Nested Navigator: semua push & modal kejebak di frame
+                  child: Navigator(
+                    onGenerateRoute: (settings) => MaterialPageRoute(
+                      builder: (_) => child,
+                    ),
+                  ),
                 ),
               ),
             ),

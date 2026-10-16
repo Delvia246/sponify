@@ -4,6 +4,125 @@ class PremiumTab extends StatelessWidget {
   const PremiumTab({super.key});
 
   @override
+<<<<<<< HEAD
+=======
+  State<PremiumTab> createState() => _PremiumTabState();
+}
+
+class _PremiumTabState extends State<PremiumTab> {
+  int _selectedPlan = 0;
+
+  final List<Map<String, dynamic>> _plans = [
+    {
+      'name': 'Individual',
+      'price': 'Rp 54.990',
+      'period': '/bulan',
+      'desc': '1 akun premium',
+      'color': const Color(0xFF1DB954),
+      'icon': Icons.person,
+    },
+    {
+      'name': 'Student',
+      'price': 'Rp 27.490',
+      'period': '/bulan',
+      'desc': 'Khusus pelajar',
+      'color': const Color(0xFF00BCD4),
+      'icon': Icons.school,
+    },
+    {
+      'name': 'Family',
+      'price': 'Rp 89.990',
+      'period': '/bulan',
+      'desc': 'Hingga 6 akun',
+      'color': const Color(0xFFFF9800),
+      'icon': Icons.people,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _benefits = [
+    {
+      'icon': Icons.block,
+      'title': 'Tanpa Iklan',
+      'desc': 'Dengarkan musik tanpa gangguan iklan',
+    },
+    {
+      'icon': Icons.download_for_offline,
+      'title': 'Mode Offline',
+      'desc': 'Download & putar tanpa koneksi',
+    },
+    {
+      'icon': Icons.high_quality,
+      'title': 'Kualitas Tinggi',
+      'desc': 'Audio hingga 320 kbps',
+    },
+    {
+      'icon': Icons.skip_next,
+      'title': 'Skip Unlimited',
+      'desc': 'Lewati lagu sesuka hati',
+    },
+  ];
+
+  void _showUpgradeDialog() {
+    final plan = _plans[_selectedPlan];
+    showDialog(
+      context: context,
+      useRootNavigator: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF282828),
+        title: const Text(
+          'Konfirmasi Upgrade',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Kamu akan upgrade ke:',
+              style: TextStyle(color: Colors.grey[400]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${plan['name']} - ${plan['price']}${plan['period']}',
+              style: const TextStyle(
+                color: Color(0xFF1DB954),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Fitur ini hanya demo untuk tugas UTS. Tidak ada transaksi nyata.',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal',
+                style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Selamat! Fitur Premium segera aktif'),
+                  backgroundColor: Color(0xFF1DB954),
+                ),
+              );
+            },
+            child: const Text('Upgrade Sekarang',
+                style: TextStyle(color: Color(0xFF1DB954))),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+>>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),

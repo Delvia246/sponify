@@ -6,6 +6,7 @@ import '../models/user.dart';
 class AuthService {
   static const String baseUrl = 'http://localhost/sponify/backend/api/';
 
+  // LOGIN - return User kalau berhasil, null kalau gagal
   Future<User?> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -26,7 +27,9 @@ class AuthService {
     }
   }
 
-  Future<bool> register(String username, String email, String password) async {
+  // REGISTER - return User (auto-login) kalau berhasil, null kalau gagal
+  Future<User?> register(
+      String username, String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('${baseUrl}register.php'),
@@ -39,10 +42,15 @@ class AuthService {
       );
 
       final data = jsonDecode(response.body);
-      return response.statusCode == 201 && data['success'] == true;
+
+      if (response.statusCode == 201 && data['success'] == true) {
+        // Auto-login setelah register berhasil
+        return await login(email, password);
+      }
+      return null;
     } catch (e) {
       debugPrint('Error register: $e');
-      return false;
+      return null;
     }
   }
 }
