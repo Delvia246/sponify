@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/login_screen.dart';
+import 'screens/welcome_screen.dart'; // IMPORT BARU
 
 void main() {
   runApp(const SponifyApp());
@@ -30,12 +30,27 @@ class SponifyApp extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
-                child: ClipRect(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 430,
-                      maxHeight: 880,
+                child: Container(
+                  // === FRAME HP (muncul 1x di seluruh app) ===
+                  width: 430,
+                  height: 880,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF121212),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: const Color(0xFF1F1F1F),
+                      width: 8,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        blurRadius: 40,
+                        offset: const Offset(0, 20),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
                     child: child!,
                   ),
                 ),
@@ -44,7 +59,7 @@ class SponifyApp extends StatelessWidget {
           ),
         );
       },
-      home: const LoginScreen(),
+      home: const WelcomeScreen(), // UBAH DARI LOGIN SCREEN
     );
   }
 }

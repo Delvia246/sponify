@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../services/auth_service.dart';
 import '../services/session_service.dart';
 import 'register_screen.dart';
@@ -29,14 +30,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    final user = await AuthService().login(email, password);
+    final result = await AuthService().login(email, password);
 
     setState(() => _isLoading = false);
 
     if (!mounted) return;
 
-    if (user != null) {
-      await SessionService.saveUser(user);
+    if (result['success'] == true) {
+      await SessionService.saveUser(result['user']);
       if (!mounted) return;
 
       Navigator.pushReplacement(
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Email atau password salah')),
+        SnackBar(content: Text(result['message'] ?? 'Login gagal')),
       );
     }
   }
@@ -60,11 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.music_note,
-                size: 80,
-                color: Color(0xFF1DB954),
-              ),
+              const Icon(Icons.music_note, size: 80, color: Color(0xFF1DB954)),
               const SizedBox(height: 16),
               const Text(
                 'Sponify',
@@ -76,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 48),
-
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -93,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -110,7 +105,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleLogin,
                 style: ElevatedButton.styleFrom(
@@ -139,13 +133,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
               ),
               const SizedBox(height: 16),
-
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const RegisterScreen()),
+                      builder: (context) => const RegisterScreen(),
+                    ),
                   );
                 },
                 child: const Text(

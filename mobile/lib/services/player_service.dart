@@ -1,31 +1,22 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
-<<<<<<< HEAD
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/song.dart';
 import 'history_service.dart';
 
 enum PlayerRepeatMode { off, all, one }
-=======
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../models/song.dart';
-import 'session_service.dart';
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
 
 class PlayerService extends ChangeNotifier {
   static final PlayerService _instance = PlayerService._internal();
   factory PlayerService() => _instance;
   PlayerService._internal();
 
-<<<<<<< HEAD
   final AudioPlayer player = AudioPlayer();
-=======
-  final AudioPlayer _player = AudioPlayer();
-  List<Song> _playlist = [];
-  int _currentIndex = -1;
-  static const String baseUrl = 'http://localhost/sponify/backend/api/';
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
 
   List<Song> _playlist = [];
   int _currentIndex = 0;
@@ -33,17 +24,28 @@ class PlayerService extends ChangeNotifier {
   bool _isShuffle = false;
   PlayerRepeatMode _repeatMode = PlayerRepeatMode.off;
 
-  // ============================================
-  // GETTERS
-  // ============================================
+  // === QUEUE ===
+  final List<Song> _queue = [];
+  int _queueCount = 0;
+
+  // === SLEEP TIMER ===
+  Timer? _sleepTimer;
+  Duration? _sleepTimerDuration;
+
   List<Song> get playlist => _playlist;
   int get currentIndex => _currentIndex;
+  List<Song> get queue => List.unmodifiable(_queue);
+  int get queueLength => _queueCount;
+
+  // Sleep timer getters
+  Duration? get sleepTimerDuration => _sleepTimerDuration;
+  bool get isSleepTimerActive => _sleepTimer != null;
+
   Song? get currentSong =>
       (_currentIndex >= 0 && _currentIndex < _playlist.length)
       ? _playlist[_currentIndex]
       : null;
 
-<<<<<<< HEAD
   bool get isPlaying => player.playing;
   bool get isShuffle => _isShuffle;
   PlayerRepeatMode get repeatMode => _repeatMode;
@@ -51,12 +53,63 @@ class PlayerService extends ChangeNotifier {
   Stream<Duration> get positionStream => player.positionStream;
   Stream<Duration?> get durationStream => player.durationStream;
 
-  // ============================================
-  // PLAY PLAYLIST
-  // ============================================
-=======
-  // Play seluruh playlist mulai dari index tertentu
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
+  // === SLEEP TIMER LOGIC ===
+  void setSleepTimer(Duration? duration) {
+    _sleepTimer?.cancel();
+    _sleepTimerDuration = duration;
+
+    if (duration != null) {
+      _sleepTimer = Timer(duration, () {
+        player.pause();
+        _sleepTimer = null;
+        _sleepTimerDuration = null;
+        notifyListeners();
+      });
+    }
+    notifyListeners();
+  }
+
+  void cancelSleepTimer() {
+    _sleepTimer?.cancel();
+    _sleepTimer = null;
+    _sleepTimerDuration = null;
+    notifyListeners();
+  }
+
+  // === QUEUE LOGIC ===
+  void addToQueue(Song song) {
+    if (_currentIndex < 0 || _currentIndex >= _playlist.length) {
+      _playlist.add(song);
+      _queue.add(song);
+    } else {
+      _playlist.insert(_currentIndex + 1 + _queueCount, song);
+      _queue.add(song);
+      _queueCount++;
+    }
+    notifyListeners();
+  }
+
+  void clearQueue() {
+    _queue.clear();
+    _queueCount = 0;
+    notifyListeners();
+  }
+
+  Future<void> _recordHistory(int songId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('user_id') ?? 1;
+
+      await http.post(
+        Uri.parse('http://localhost/sponify/backend/api/record_history.php'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId, 'song_id': songId}),
+      );
+    } catch (e) {
+      debugPrint('Error recordHistory: $e');
+    }
+  }
+
   Future<void> playPlaylist(List<Song> songs, int startIndex) async {
     if (songs.isEmpty) return;
 
@@ -65,55 +118,24 @@ class PlayerService extends ChangeNotifier {
         currentSong?.id == songs[startIndex].id) {
       if (!player.playing) await player.play();
       notifyListeners();
-<<<<<<< HEAD
       return;
-=======
-      // Catat ke listening history
-      _recordHistory(song.id);
-    } catch (e) {
-      debugPrint('Error play: $e');
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
     }
 
     _playlist = List.from(songs);
     _currentIndex = startIndex;
+    _queueCount = 0;
 
     try {
       await player.setUrl(_playlist[_currentIndex].audioUrl);
       await player.play();
-      // Simpan ke history
       await HistoryService.addSong(_playlist[_currentIndex]);
+      await _recordHistory(_playlist[_currentIndex].id);
     } catch (e) {
       debugPrint('Error playPlaylist: $e');
     }
     notifyListeners();
   }
 
-<<<<<<< HEAD
-  // ============================================
-  // TOGGLE PLAY / PAUSE
-  // ============================================
-=======
-  // Kirim log ke backend (fire and forget)
-  Future<void> _recordHistory(int songId) async {
-    try {
-      final user = await SessionService.getUser();
-      if (user == null) return;
-
-      await http.post(
-        Uri.parse('${baseUrl}record_history.php'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'user_id': user.id,
-          'song_id': songId,
-        }),
-      );
-    } catch (e) {
-      debugPrint('Error record history: $e');
-    }
-  }
-
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
   Future<void> togglePlayPause() async {
     if (player.playing) {
       await player.pause();
@@ -123,11 +145,9 @@ class PlayerService extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ============================================
-  // NEXT
-  // ============================================
   Future<void> next() async {
     if (_playlist.isEmpty) return;
+    if (_queueCount > 0) _queueCount--;
 
     if (_repeatMode == PlayerRepeatMode.one) {
       await player.seek(Duration.zero);
@@ -159,17 +179,14 @@ class PlayerService extends ChangeNotifier {
     try {
       await player.setUrl(_playlist[_currentIndex].audioUrl);
       await player.play();
-      // Simpan ke history
       await HistoryService.addSong(_playlist[_currentIndex]);
+      await _recordHistory(_playlist[_currentIndex].id);
     } catch (e) {
       debugPrint('Error next: $e');
     }
     notifyListeners();
   }
 
-  // ============================================
-  // PREVIOUS
-  // ============================================
   Future<void> previous() async {
     if (_playlist.isEmpty) return;
 
@@ -194,32 +211,23 @@ class PlayerService extends ChangeNotifier {
     try {
       await player.setUrl(_playlist[_currentIndex].audioUrl);
       await player.play();
-      // Simpan ke history
       await HistoryService.addSong(_playlist[_currentIndex]);
+      await _recordHistory(_playlist[_currentIndex].id);
     } catch (e) {
       debugPrint('Error previous: $e');
     }
     notifyListeners();
   }
 
-  // ============================================
-  // SEEK
-  // ============================================
   Future<void> seek(Duration position) async {
     await player.seek(position);
   }
 
-  // ============================================
-  // SHUFFLE
-  // ============================================
   void toggleShuffle() {
     _isShuffle = !_isShuffle;
     notifyListeners();
   }
 
-  // ============================================
-  // REPEAT
-  // ============================================
   void cycleRepeat() {
     if (_repeatMode == PlayerRepeatMode.off) {
       _repeatMode = PlayerRepeatMode.all;
@@ -233,6 +241,7 @@ class PlayerService extends ChangeNotifier {
 
   @override
   void dispose() {
+    _sleepTimer?.cancel();
     player.dispose();
     super.dispose();
   }

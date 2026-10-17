@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../services/auth_service.dart';
 import '../services/session_service.dart';
 import 'main_screen.dart';
@@ -22,9 +23,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _passwordController.text;
 
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Semua kolom wajib diisi')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Semua kolom wajib diisi')));
       return;
     }
 
@@ -37,14 +38,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    final user = await AuthService().register(username, email, password);
+    final result = await AuthService().register(username, email, password);
 
     setState(() => _isLoading = false);
 
     if (!mounted) return;
 
-    if (user != null) {
-      await SessionService.saveUser(user);
+    if (result['success'] == true) {
+      await SessionService.saveUser(result['user']);
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -59,10 +60,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (context) => const MainScreen()),
       );
     } else {
+      // TAMPILKAN ERROR ASLI DARI SERVER
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Registrasi gagal. Email atau username mungkin sudah dipakai.'),
+        SnackBar(
+          content: Text(result['message'] ?? 'Registrasi gagal'),
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
@@ -92,7 +94,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-
               TextField(
                 controller: _usernameController,
                 style: const TextStyle(color: Colors.white),
@@ -108,7 +109,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -125,7 +125,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -142,7 +141,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(

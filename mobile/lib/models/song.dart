@@ -1,5 +1,7 @@
 class Song {
   final int id;
+  final int albumId; // BARU
+  final int artistId; // BARU
   final String title;
   final int duration;
   final String audioUrl;
@@ -10,6 +12,8 @@ class Song {
 
   Song({
     required this.id,
+    required this.albumId,
+    required this.artistId,
     required this.title,
     required this.duration,
     required this.audioUrl,
@@ -22,6 +26,8 @@ class Song {
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
       id: int.parse(json['id'].toString()),
+      albumId: int.parse((json['album_id'] ?? '0').toString()),
+      artistId: int.parse((json['artist_id'] ?? '0').toString()),
       title: json['title'].toString(),
       duration: int.parse(json['duration'].toString()),
       audioUrl: json['audio_url'].toString(),
@@ -32,7 +38,6 @@ class Song {
     );
   }
 
-  // Format durasi dari detik ke "3:15"
   String get formattedDuration {
     final minutes = duration ~/ 60;
     final seconds = duration % 60;

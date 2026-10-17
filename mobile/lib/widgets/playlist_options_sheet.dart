@@ -9,14 +9,14 @@ class PlaylistOptionsSheet extends StatelessWidget {
     super.key,
     required this.playlistName,
     required this.songCount,
-    this.creator = 'oleh Sponify',
+    this.creator = 'oleh Sponify', // FIX
   });
 
   static void show(
     BuildContext context, {
     required String playlistName,
     required int songCount,
-    String creator = 'oleh Sponify',
+    String creator = 'oleh Sponify', // FIX
   }) {
     showModalBottomSheet(
       context: context,
@@ -60,7 +60,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Handle
               Container(
                 margin: const EdgeInsets.only(top: 8, bottom: 12),
                 width: 40,
@@ -70,8 +69,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-
-              // Header: Cover + Info
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -125,9 +122,7 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Divider(color: Color(0xFF3E3E3E), height: 20),
-
               _menuItem(
                 context,
                 icon: Icons.share_outlined,
@@ -137,7 +132,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Fitur bagikan segera hadir');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.add_circle_outline,
@@ -147,7 +141,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Ditambahkan ke Koleksi Kamu');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.download_outlined,
@@ -158,7 +151,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Fitur download segera hadir');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.queue_music,
@@ -168,7 +160,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Ditambahkan ke antrean');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.playlist_add,
@@ -178,7 +169,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Fitur tambah ke playlist lain segera hadir');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.headphones,
@@ -189,7 +179,6 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Fitur dengar bareng segera hadir');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.cancel_outlined,
@@ -199,17 +188,15 @@ class PlaylistOptionsSheet extends StatelessWidget {
                   _snack(context, 'Playlist dikecualikan');
                 },
               ),
-
               _menuItem(
                 context,
                 icon: Icons.graphic_eq,
                 title: 'Tampilkan Kode Sponify',
                 onTap: () {
                   Navigator.pop(context);
-                  _snack(context, 'Fitur kode Spotify segera hadir');
+                  _snack(context, 'Fitur kode Sponify segera hadir');
                 },
-              ),
-
+              ), // FIX
               const SizedBox(height: 8),
             ],
           ),

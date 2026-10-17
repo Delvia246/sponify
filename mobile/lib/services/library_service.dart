@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
 import '../models/playlist.dart';
 import '../models/artist.dart';
 import '../models/album.dart';
@@ -9,7 +11,6 @@ import '../models/song.dart';
 class LibraryService {
   static const String baseUrl = 'http://localhost/sponify/backend/api/';
 
-  // Ambil playlist milik user
   Future<List<Playlist>> getPlaylists(int userId) async {
     try {
       final response = await http.get(
@@ -29,9 +30,11 @@ class LibraryService {
     }
   }
 
-  // Bikin playlist baru
   Future<bool> createPlaylist(
-      int userId, String name, String description) async {
+    int userId,
+    String name,
+    String description,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('${baseUrl}playlists.php'),
@@ -50,11 +53,9 @@ class LibraryService {
     }
   }
 
-  // Ambil semua artis
   Future<List<Artist>> getArtists() async {
     try {
-      final response =
-          await http.get(Uri.parse('${baseUrl}artists.php'));
+      final response = await http.get(Uri.parse('${baseUrl}artists.php'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
@@ -69,11 +70,9 @@ class LibraryService {
     }
   }
 
-  // Ambil semua album
   Future<List<Album>> getAlbums() async {
     try {
-      final response =
-          await http.get(Uri.parse('${baseUrl}albums.php'));
+      final response = await http.get(Uri.parse('${baseUrl}albums.php'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['success'] == true) {
@@ -88,7 +87,6 @@ class LibraryService {
     }
   }
 
-  // Ambil semua lagu dalam playlist
   Future<List<Song>> getPlaylistSongs(int playlistId) async {
     try {
       final response = await http.get(
@@ -105,6 +103,22 @@ class LibraryService {
     } catch (e) {
       debugPrint('Error getSongsInPlaylist: $e');
       return [];
+    }
+  }
+
+  // === METHOD BARU: Tambah lagu ke playlist ===
+  Future<bool> addSongToPlaylist(int playlistId, int songId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${baseUrl}playlist_songs.php'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'playlist_id': playlistId, 'song_id': songId}),
+      );
+      final data = jsonDecode(response.body);
+      return response.statusCode == 201 && data['success'] == true;
+    } catch (e) {
+      debugPrint('Error addSongToPlaylist: $e');
+      return false;
     }
   }
 }

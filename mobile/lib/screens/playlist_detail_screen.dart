@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/song.dart';
 import '../services/library_service.dart';
 import '../services/player_service.dart';
@@ -28,7 +29,7 @@ class _PlaylistDetailScreenState extends State<PlaylistDetailScreen> {
   }
 
   Future<void> _loadSongs() async {
-final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
+    final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
     if (!mounted) return;
     setState(() {
       _songs = songs;
@@ -56,7 +57,7 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
               )
             : CustomScrollView(
                 slivers: [
-                  // === HEADER dengan gradient ===
+                  // === HEADER ===
                   SliverAppBar(
                     pinned: true,
                     expandedHeight: 320,
@@ -77,7 +78,6 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            // Cover besar dengan ikon musik
                             Container(
                               width: 160,
                               height: 160,
@@ -107,8 +107,9 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                             ),
                             const SizedBox(height: 20),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                              ),
                               child: Text(
                                 widget.playlistName,
                                 style: const TextStyle(
@@ -136,13 +137,12 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                     ),
                   ),
 
-                  // === TOMBOL PLAY ALL + SHUFFLE ===
+                  // === PLAY ALL + SHUFFLE ===
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                       child: Row(
                         children: [
-                          // Play all
                           GestureDetector(
                             onTap: _playAll,
                             child: Container(
@@ -160,11 +160,12 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                             ),
                           ),
                           const SizedBox(width: 16),
-                          // Shuffle
                           IconButton(
                             iconSize: 32,
-                            icon: const Icon(Icons.shuffle,
-                                color: Color(0xFF1DB954)),
+                            icon: const Icon(
+                              Icons.shuffle,
+                              color: Color(0xFF1DB954),
+                            ),
                             onPressed: () {
                               if (_songs.isEmpty) return;
                               final shuffled = List<Song>.from(_songs)
@@ -175,8 +176,10 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                           const Spacer(),
                           IconButton(
                             iconSize: 28,
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.white),
+                            icon: const Icon(
+                              Icons.more_vert,
+                              color: Colors.white,
+                            ),
                             onPressed: () {},
                           ),
                         ],
@@ -184,54 +187,57 @@ final songs = await LibraryService().getPlaylistSongs(widget.playlistId);
                     ),
                   ),
 
-                  // === DAFTAR LAGU ===
+                  // === LIST LAGU ===
                   SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final song = _songs[index];
-                        return ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 4),
-                          leading: SizedBox(
-                            width: 44,
-                            child: Center(
-                              child: Text(
-                                '${index + 1}',
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final song = _songs[index];
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        leading: SizedBox(
+                          width: 44,
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          title: Text(
-                            song.title,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 15,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        ),
+                        title: Text(
+                          song.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15,
                           ),
-                          subtitle: Text(
-                            song.artist,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 13),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          song.artist,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 13,
                           ),
-                          trailing: Text(
-                            song.formattedDuration,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Text(
+                          song.formattedDuration,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 13,
                           ),
-                          onTap: () => _playSong(index),
-                        );
-                      },
-                      childCount: _songs.length,
-                    ),
+                        ),
+                        onTap: () => _playSong(index),
+                      );
+                    }, childCount: _songs.length),
                   ),
 
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),

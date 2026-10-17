@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import '../models/song.dart';
 import '../services/song_service.dart';
 import '../widgets/like_button.dart';
 import '../widgets/song_options_sheet.dart';
 import '../widgets/sponify_code_sheet.dart';
+import '../widgets/profile_menu_sheet.dart';
+import '../widgets/song_artwork.dart'; // IMPORT BARU
+import 'music_screen.dart';
+import 'podcast_screen.dart';
 
 class SearchTab extends StatefulWidget {
   const SearchTab({super.key});
@@ -58,11 +61,6 @@ class _SearchTabState extends State<SearchTab> {
     });
   }
 
-  void _onCategoryTap(String categoryName) {
-    _searchController.text = categoryName;
-    _onSearch(categoryName);
-  }
-
   void _clearSearch() {
     _searchController.clear();
     _onSearch('');
@@ -90,37 +88,35 @@ class _SearchTabState extends State<SearchTab> {
     );
   }
 
-  // ============================================
-  // VIEW 1: BROWSE
-  // ============================================
   Widget _buildBrowse() {
     return CustomScrollView(
       slivers: [
-        // === HEADER: Profile + "Cari" + Kamera ===
+        // === HEADER ===
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             child: Row(
               children: [
-                // Avatar profil
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF1DB954), Color(0xFF1ED760)],
+                // Avatar profil → buka ProfileMenuSheet
+                GestureDetector(
+                  onTap: () => ProfileMenuSheet.show(context),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF1DB954), Color(0xFF1ED760)],
+                      ),
                     ),
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.black,
-                    size: 20,
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.black,
+                      size: 20,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
-
-                // Judul "Cari"
                 const Text(
                   'Cari',
                   style: TextStyle(
@@ -129,9 +125,7 @@ class _SearchTabState extends State<SearchTab> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const Spacer(),
-
                 // Icon kamera
                 IconButton(
                   icon: const Icon(
@@ -139,9 +133,7 @@ class _SearchTabState extends State<SearchTab> {
                     color: Colors.white,
                     size: 26,
                   ),
-                  onPressed: () {
-                    SponifyCodeSheet.show(context);
-                  },
+                  onPressed: () => SponifyCodeSheet.show(context),
                 ),
               ],
             ),
@@ -194,37 +186,51 @@ class _SearchTabState extends State<SearchTab> {
                   'Musik',
                   const Color(0xFFE91E63),
                   Icons.music_note,
-                  () => _onCategoryTap('Musik'),
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MusicScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _categoryCard(
                   'Podcast',
                   const Color(0xFF00695C),
                   Icons.podcasts,
-                  () => _onCategoryTap('Podcast'),
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PodcastScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _categoryCard(
                   'Acara Langsung',
                   const Color(0xFF7B1FA2),
                   Icons.mic,
-                  () => _onCategoryTap('Acara'),
+                  () => _quickSnack(context, 'Acara Langsung segera hadir'),
                 ),
                 _categoryCard(
                   'K-Pop ON!',
                   const Color(0xFF3949AB),
                   Icons.star,
-                  () => _onCategoryTap('K-Pop'),
+                  () => _quickSnack(context, 'K-Pop ON! segera hadir'),
                 ),
                 _categoryCard(
                   'Dibuat Untuk Kamu',
                   const Color(0xFF7E57C2),
                   Icons.person,
-                  () => _onCategoryTap('Daily Mix'),
+                  () => _quickSnack(context, 'Dibuat Untuk Kamu segera hadir'),
                 ),
                 _categoryCard(
                   'Baru Rilis',
                   const Color(0xFF1DB954),
                   Icons.new_releases,
-                  () => _onCategoryTap('New'),
+                  () => _quickSnack(context, 'Baru Rilis segera hadir'),
                 ),
               ],
             ),
@@ -256,6 +262,7 @@ class _SearchTabState extends State<SearchTab> {
             height: 220,
             child: ListView(
               scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none, // FIX: agar tidak terpotong
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _discoverCard('#secret admirer', const Color(0xFF37474F)),
@@ -270,6 +277,12 @@ class _SearchTabState extends State<SearchTab> {
 
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
+    );
+  }
+
+  void _quickSnack(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), duration: const Duration(seconds: 1)),
     );
   }
 
@@ -368,9 +381,7 @@ class _SearchTabState extends State<SearchTab> {
     );
   }
 
-  // ============================================
-  // VIEW 2: HASIL PENCARIAN
-  // ============================================
+  // === HASIL PENCARIAN ===
   Widget _buildSearchResults() {
     return Column(
       children: [
@@ -421,32 +432,11 @@ class _SearchTabState extends State<SearchTab> {
                         horizontal: 8,
                         vertical: 2,
                       ),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: CachedNetworkImage(
-                          imageUrl: song.coverUrl,
-                          width: 52,
-                          height: 52,
-                          fit: BoxFit.cover,
-                          placeholder: (c, u) => Container(
-                            width: 52,
-                            height: 52,
-                            color: const Color(0xFF282828),
-                            child: const Icon(
-                              Icons.music_note,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          errorWidget: (c, u, e) => Container(
-                            width: 52,
-                            height: 52,
-                            color: const Color(0xFF282828),
-                            child: const Icon(
-                              Icons.music_note,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
+                      leading: SongArtwork(
+                        // GANTI: SongArtwork
+                        imageUrl: song.coverUrl,
+                        size: 52,
+                        borderRadius: 4,
                       ),
                       title: Text(
                         song.title,

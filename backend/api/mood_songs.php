@@ -25,6 +25,7 @@ $moodMap = [
 $condition = $moodMap[strtolower($mood)] ?? "1=1";
 
 $query = "SELECT s.id, s.title, s.duration, s.audio_url, s.lyrics,
+          s.album_id, al.artist_id,
           al.title AS album, al.cover_url,
           ar.name AS artist
           FROM songs s

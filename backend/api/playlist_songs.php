@@ -12,6 +12,7 @@ if ($method === 'GET') {
     $playlist_id = $conn->real_escape_string($playlist_id);
 
     $query = "SELECT s.id, s.title, s.duration, s.audio_url,
+              s.album_id, al.artist_id,
               al.title AS album, al.cover_url,
               ar.name AS artist
               FROM playlist_songs ps

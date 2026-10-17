@@ -4,125 +4,6 @@ class PremiumTab extends StatelessWidget {
   const PremiumTab({super.key});
 
   @override
-<<<<<<< HEAD
-=======
-  State<PremiumTab> createState() => _PremiumTabState();
-}
-
-class _PremiumTabState extends State<PremiumTab> {
-  int _selectedPlan = 0;
-
-  final List<Map<String, dynamic>> _plans = [
-    {
-      'name': 'Individual',
-      'price': 'Rp 54.990',
-      'period': '/bulan',
-      'desc': '1 akun premium',
-      'color': const Color(0xFF1DB954),
-      'icon': Icons.person,
-    },
-    {
-      'name': 'Student',
-      'price': 'Rp 27.490',
-      'period': '/bulan',
-      'desc': 'Khusus pelajar',
-      'color': const Color(0xFF00BCD4),
-      'icon': Icons.school,
-    },
-    {
-      'name': 'Family',
-      'price': 'Rp 89.990',
-      'period': '/bulan',
-      'desc': 'Hingga 6 akun',
-      'color': const Color(0xFFFF9800),
-      'icon': Icons.people,
-    },
-  ];
-
-  final List<Map<String, dynamic>> _benefits = [
-    {
-      'icon': Icons.block,
-      'title': 'Tanpa Iklan',
-      'desc': 'Dengarkan musik tanpa gangguan iklan',
-    },
-    {
-      'icon': Icons.download_for_offline,
-      'title': 'Mode Offline',
-      'desc': 'Download & putar tanpa koneksi',
-    },
-    {
-      'icon': Icons.high_quality,
-      'title': 'Kualitas Tinggi',
-      'desc': 'Audio hingga 320 kbps',
-    },
-    {
-      'icon': Icons.skip_next,
-      'title': 'Skip Unlimited',
-      'desc': 'Lewati lagu sesuka hati',
-    },
-  ];
-
-  void _showUpgradeDialog() {
-    final plan = _plans[_selectedPlan];
-    showDialog(
-      context: context,
-      useRootNavigator: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF282828),
-        title: const Text(
-          'Konfirmasi Upgrade',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Kamu akan upgrade ke:',
-              style: TextStyle(color: Colors.grey[400]),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${plan['name']} - ${plan['price']}${plan['period']}',
-              style: const TextStyle(
-                color: Color(0xFF1DB954),
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Fitur ini hanya demo untuk tugas UTS. Tidak ada transaksi nyata.',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Batal',
-                style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Selamat! Fitur Premium segera aktif'),
-                  backgroundColor: Color(0xFF1DB954),
-                ),
-              );
-            },
-            child: const Text('Upgrade Sekarang',
-                style: TextStyle(color: Color(0xFF1DB954))),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -130,7 +11,6 @@ class _PremiumTabState extends State<PremiumTab> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
           children: [
-            // === HEADER ===
             const Row(
               children: [
                 Icon(Icons.workspace_premium, color: Colors.white, size: 28),
@@ -146,8 +26,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ],
             ),
             const SizedBox(height: 24),
-
-            // === HERO IMAGE SECTION ===
             Container(
               height: 220,
               decoration: BoxDecoration(
@@ -186,8 +64,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // === TITLE & SUBTITLE ===
             const Text(
               'Nikmati musikmu sepuasnya dengan Premium Standard.',
               style: TextStyle(
@@ -198,8 +74,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // === CTA BUTTON ===
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -234,8 +108,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ),
             ),
             const SizedBox(height: 32),
-
-            // === WHY PREMIUM ===
             const Text(
               'Kenapa harus pilih Premium Standard?',
               style: TextStyle(
@@ -253,8 +125,6 @@ class _PremiumTabState extends State<PremiumTab> {
               'Mendengarkan bersama teman secara real-time',
             ),
             const SizedBox(height: 32),
-
-            // === PAKET TERSEDIA ===
             const Text(
               'Paket yang tersedia',
               style: TextStyle(
@@ -264,8 +134,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // STUDENT
             _planCard(
               context,
               badge: 'Diskon tersedia',
@@ -285,8 +153,6 @@ class _PremiumTabState extends State<PremiumTab> {
               footer: 'Tawaran Sponify Premium Student tersedia untuk siswa institusi pendidikan tingkat lanjut terakreditasi yang belum pernah mencoba Premium.',
             ),
             const SizedBox(height: 16),
-
-            // STANDARD
             _planCard(
               context,
               title: 'Standard',
@@ -303,8 +169,6 @@ class _PremiumTabState extends State<PremiumTab> {
               buttonText: 'Dapatkan Premium Standard',
             ),
             const SizedBox(height: 16),
-
-            // PLATINUM
             _planCard(
               context,
               title: 'Platinum',
@@ -370,7 +234,6 @@ class _PremiumTabState extends State<PremiumTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Badge
           if (badge != null) ...[
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -389,8 +252,6 @@ class _PremiumTabState extends State<PremiumTab> {
             ),
             const SizedBox(height: 12),
           ],
-
-          // Logo premium kecil
           Row(
             children: [
               Container(
@@ -418,8 +279,6 @@ class _PremiumTabState extends State<PremiumTab> {
             ],
           ),
           const SizedBox(height: 12),
-
-          // Title
           Text(
             title,
             style: TextStyle(
@@ -429,8 +288,6 @@ class _PremiumTabState extends State<PremiumTab> {
             ),
           ),
           const SizedBox(height: 4),
-
-          // Price
           Text(
             price,
             style: const TextStyle(
@@ -440,11 +297,8 @@ class _PremiumTabState extends State<PremiumTab> {
             ),
           ),
           const SizedBox(height: 16),
-
           Divider(color: Colors.white.withValues(alpha: 0.1)),
           const SizedBox(height: 12),
-
-          // Features
           ...features.map(
             (f) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
@@ -478,8 +332,6 @@ class _PremiumTabState extends State<PremiumTab> {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Button
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -509,8 +361,6 @@ class _PremiumTabState extends State<PremiumTab> {
               ),
             ),
           ),
-
-          // Footer
           if (footer != null) ...[
             const SizedBox(height: 12),
             Text(

@@ -12,7 +12,8 @@ if ($method === 'GET') {
     }
     $user_id = $conn->real_escape_string($user_id);
 
-    $query = "SELECT s.id, s.title, s.duration, s.audio_url,
+    $query = "SELECT s.id, s.title, s.duration, s.audio_url, 
+              s.album_id, al.artist_id,
               al.title AS album, al.cover_url,
               ar.name AS artist
               FROM liked_songs ls

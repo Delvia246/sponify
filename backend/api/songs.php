@@ -12,6 +12,8 @@ $query = "SELECT
             songs.duration, 
             songs.audio_url,
             songs.lyrics,
+            songs.album_id,
+            albums.artist_id,
             albums.title AS album,
             albums.cover_url,
             artists.name AS artist

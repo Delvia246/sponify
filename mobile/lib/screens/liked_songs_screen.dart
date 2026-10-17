@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
 import '../models/song.dart';
 import '../services/liked_service.dart';
 import '../services/player_service.dart';
@@ -50,8 +51,8 @@ class _LikedSongsScreenState extends State<LikedSongsScreen> {
     final result = await LikedService().toggleLike(userId, _songs[index].id);
     if (!mounted) return;
 
-    if (result != null && result == false) {
-      // Berhasil unlike → hapus dari list
+    // FIX: hapus `result != null` — result sudah pasti bool (non-null)
+    if (result == false) {
       setState(() => _songs.removeAt(index));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lagu dihapus dari Liked Songs')),
@@ -99,15 +100,14 @@ class _LikedSongsScreenState extends State<LikedSongsScreen> {
                                 gradient: const LinearGradient(
                                   colors: [
                                     Color(0xFF7B5CFF),
-                                    Color(0xFF4B22F4)
+                                    Color(0xFF4B22F4),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color:
-                                        Colors.black.withValues(alpha: 0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
@@ -168,8 +168,10 @@ class _LikedSongsScreenState extends State<LikedSongsScreen> {
                           const SizedBox(width: 16),
                           IconButton(
                             iconSize: 32,
-                            icon: const Icon(Icons.shuffle,
-                                color: Color(0xFF1DB954)),
+                            icon: const Icon(
+                              Icons.shuffle,
+                              color: Color(0xFF1DB954),
+                            ),
                             onPressed: () {
                               if (_songs.isEmpty) return;
                               final shuffled = List<Song>.from(_songs)
@@ -198,73 +200,85 @@ class _LikedSongsScreenState extends State<LikedSongsScreen> {
                           ),
                         )
                       : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final song = _songs[index];
-                              return ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 4),
-                                leading: ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: CachedNetworkImage(
-                                    imageUrl: song.coverUrl,
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final song = _songs[index];
+                            return ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: CachedNetworkImage(
+                                  imageUrl: song.coverUrl,
+                                  width: 52,
+                                  height: 52,
+                                  fit: BoxFit.cover,
+                                  placeholder: (c, u) => Container(
                                     width: 52,
                                     height: 52,
-                                    fit: BoxFit.cover,
-                                    placeholder: (c, u) => Container(
-                                      width: 52,
-                                      height: 52,
-                                      color: const Color(0xFF282828),
-                                      child: const Icon(Icons.music_note,
-                                          color: Colors.grey),
+                                    color: const Color(0xFF282828),
+                                    child: const Icon(
+                                      Icons.music_note,
+                                      color: Colors.grey,
                                     ),
-                                    errorWidget: (c, u, e) => Container(
-                                      width: 52,
-                                      height: 52,
-                                      color: const Color(0xFF282828),
-                                      child: const Icon(Icons.music_note,
-                                          color: Colors.grey),
+                                  ),
+                                  errorWidget: (c, u, e) => Container(
+                                    width: 52,
+                                    height: 52,
+                                    color: const Color(0xFF282828),
+                                    child: const Icon(
+                                      Icons.music_note,
+                                      color: Colors.grey,
                                     ),
                                   ),
                                 ),
-                                title: Text(
-                                  song.title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15,
+                              ),
+                              title: Text(
+                                song.title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(
+                                song.artist,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 13,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    song.formattedDuration,
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 13,
+                                    ),
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                subtitle: Text(
-                                  song.artist,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 13),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      song.formattedDuration,
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 13),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.favorite,
+                                      color: Color(0xFF1DB954),
                                     ),
-                                    const SizedBox(width: 8),
-                                    IconButton(
-                                      icon: const Icon(Icons.favorite,
-                                          color: Color(0xFF1DB954)),
-                                      onPressed: () => _unlike(index),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () => _playSong(index),
-                              );
-                            },
-                            childCount: _songs.length,
-                          ),
+                                    onPressed: () => _unlike(index),
+                                  ),
+                                ],
+                              ),
+                              onTap: () => _playSong(index),
+                            );
+                          }, childCount: _songs.length),
                         ),
 
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/song.dart';
@@ -11,6 +10,7 @@ import '../widgets/now_playing_indicator.dart';
 import '../widgets/song_options_sheet.dart';
 import '../widgets/playlist_header.dart';
 import '../widgets/playlist_options_sheet.dart';
+import '../widgets/song_artwork.dart'; // IMPORT BARU
 
 class QuickPlaylistScreen extends StatefulWidget {
   final String title;
@@ -223,32 +223,11 @@ class _QuickPlaylistScreenState extends State<QuickPlaylistScreen> {
                   )
                 : Hero(
                     tag: 'cover_${song.id}',
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: CachedNetworkImage(
-                        imageUrl: song.coverUrl,
-                        width: 52,
-                        height: 52,
-                        fit: BoxFit.cover,
-                        placeholder: (c, u) => Container(
-                          width: 52,
-                          height: 52,
-                          color: const Color(0xFF282828),
-                          child: const Icon(
-                            Icons.music_note,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        errorWidget: (c, u, e) => Container(
-                          width: 52,
-                          height: 52,
-                          color: const Color(0xFF282828),
-                          child: const Icon(
-                            Icons.music_note,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
+                    child: SongArtwork(
+                      // GANTI: SongArtwork
+                      imageUrl: song.coverUrl,
+                      size: 52,
+                      borderRadius: 4,
                     ),
                   ),
           ),

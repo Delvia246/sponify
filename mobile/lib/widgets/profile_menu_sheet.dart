@@ -4,6 +4,9 @@ import '../services/session_service.dart';
 import '../screens/recently_played_screen.dart';
 import '../screens/whats_new_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/stats_screen.dart';
+import '../screens/profile_screen.dart';
+import '../screens/welcome_screen.dart'; // IMPORT BARU
 import 'phone_frame.dart';
 
 class ProfileMenuSheet extends StatelessWidget {
@@ -64,48 +67,62 @@ class ProfileMenuSheet extends StatelessWidget {
                 ),
 
                 // === PROFILE HEADER ===
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      const CircleAvatar(
-                        radius: 26,
-                        backgroundColor: Color(0xFF1DB954),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.black,
-                          size: 28,
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => phoneWrap(const ProfileScreen()),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 26,
+                          backgroundColor: Color(0xFF1DB954),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.black,
+                            size: 28,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      FutureBuilder(
-                        future: SessionService.getUser(),
-                        builder: (context, snap) {
-                          final user = snap.data;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user?.username ?? 'Pengguna',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                        const SizedBox(width: 12),
+                        FutureBuilder(
+                          future: SessionService.getUser(),
+                          builder: (context, snap) {
+                            final user = snap.data;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user?.username ?? 'Pengguna',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                'Lihat profil',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12,
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'Lihat profil',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -128,10 +145,11 @@ class ProfileMenuSheet extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Fitur tambah akun segera hadir'),
-                        duration: Duration(seconds: 1),
+                    // Arahkan ke WelcomeScreen untuk login dengan akun baru
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WelcomeScreen(),
                       ),
                     );
                   },
@@ -155,6 +173,22 @@ class ProfileMenuSheet extends StatelessWidget {
                     );
                   },
                 ),
+
+                _menuItem(
+                  context,
+                  icon: Icons.insights,
+                  title: 'Statistik Kamu',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => phoneWrap(const StatsScreen()),
+                      ),
+                    );
+                  },
+                ),
+
                 _menuItem(
                   context,
                   icon: Icons.campaign_outlined,
