@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'home_tab.dart';
 import 'search_tab.dart';
 import 'library_tab.dart';
@@ -31,14 +30,19 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      body: IndexedStack(
-        index: _currentIndex == 4 ? 0 : _currentIndex,
-        children: tabs,
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
+      // Gunakan Column agar Navbar nempel di bawah
+      body: Column(
         children: [
+          // Expanded: Isi konten (bisa di-scroll)
+          Expanded(
+            child: IndexedStack(
+              index: _currentIndex == 4 ? 0 : _currentIndex,
+              children: tabs,
+            ),
+          ),
+          // Mini Player (jika ada lagu)
           const MiniPlayer(),
+          // Bottom Navigation Bar (fixed di bawah)
           Container(
             decoration: const BoxDecoration(color: Color(0xFF000000)),
             child: SafeArea(
@@ -60,26 +64,11 @@ class _MainScreenState extends State<MainScreen> {
                 iconSize: 22,
                 type: BottomNavigationBarType.fixed,
                 items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home_filled, size: 22),
-                    label: 'Home',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.search, size: 22),
-                    label: 'Search',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.library_music_outlined, size: 22),
-                    label: 'Library',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.workspace_premium_outlined, size: 22),
-                    label: 'Premium',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.add_box_outlined, size: 22),
-                    label: 'Create',
-                  ),
+                  BottomNavigationBarItem(icon: Icon(Icons.home_filled, size: 22), label: 'Home'),
+                  BottomNavigationBarItem(icon: Icon(Icons.search, size: 22), label: 'Search'),
+                  BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined, size: 22), label: 'Library'),
+                  BottomNavigationBarItem(icon: Icon(Icons.workspace_premium_outlined, size: 22), label: 'Premium'),
+                  BottomNavigationBarItem(icon: Icon(Icons.add_box_outlined, size: 22), label: 'Create'),
                 ],
               ),
             ),
@@ -94,6 +83,7 @@ class _MainScreenState extends State<MainScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      useRootNavigator: false,
       builder: (sheetContext) => GestureDetector(
         onTap: () => Navigator.pop(sheetContext),
         behavior: HitTestBehavior.opaque,
@@ -111,9 +101,7 @@ class _MainScreenState extends State<MainScreen> {
                     padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
                     decoration: const BoxDecoration(
                       color: Color(0xFF1F1F1F),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                     ),
                     child: SafeArea(
                       top: false,
@@ -146,14 +134,7 @@ class _MainScreenState extends State<MainScreen> {
                             subtitle: 'Buat playlist bersama teman',
                             onTap: () {
                               Navigator.pop(sheetContext);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Fitur playlist kolaboratif segera hadir',
-                                  ),
-                                  duration: Duration(seconds: 1),
-                                ),
-                              );
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fitur playlist kolaboratif segera hadir'), duration: Duration(seconds: 1)));
                             },
                           ),
                           _sheetOption(
@@ -163,12 +144,7 @@ class _MainScreenState extends State<MainScreen> {
                             subtitle: 'Satukan selera musik teman-temanmu dalam sebuah playlist',
                             onTap: () {
                               Navigator.pop(sheetContext);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Fitur blend segera hadir'),
-                                  duration: Duration(seconds: 1),
-                                ),
-                              );
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fitur blend segera hadir'), duration: Duration(seconds: 1)));
                             },
                           ),
                           const SizedBox(height: 8),
@@ -185,13 +161,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _sheetOption(
-    BuildContext sheetContext, {
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
+  Widget _sheetOption(BuildContext sheetContext, {required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -202,10 +172,7 @@ class _MainScreenState extends State<MainScreen> {
             Container(
               width: 44,
               height: 44,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xFF2A2A2A),
-              ),
+              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF2A2A2A)),
               child: Icon(icon, color: Colors.white, size: 22),
             ),
             const SizedBox(width: 16),
@@ -213,22 +180,9 @@ class _MainScreenState extends State<MainScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12)),
                 ],
               ),
             ),
@@ -247,56 +201,26 @@ class _MainScreenState extends State<MainScreen> {
       useRootNavigator: false,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF282828),
-        title: const Text(
-          'Buat Playlist Baru',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Buat Playlist Baru', style: TextStyle(color: Colors.white)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'Nama Playlist',
-                labelStyle: const TextStyle(color: Colors.grey),
-                filled: true,
-                fillColor: const Color(0xFF1F1F1F),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+              decoration: InputDecoration(labelText: 'Nama Playlist', labelStyle: const TextStyle(color: Colors.grey), filled: true, fillColor: const Color(0xFF1F1F1F), border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none)),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: descController,
               style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'Deskripsi (opsional)',
-                labelStyle: const TextStyle(color: Colors.grey),
-                filled: true,
-                fillColor: const Color(0xFF1F1F1F),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+              decoration: InputDecoration(labelText: 'Deskripsi (opsional)', labelStyle: const TextStyle(color: Colors.grey), filled: true, fillColor: const Color(0xFF1F1F1F), border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none)),
             ),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Batal', style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Buat',
-              style: TextStyle(color: Color(0xFF1DB954)),
-            ),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal', style: TextStyle(color: Colors.grey))),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Buat', style: TextStyle(color: Color(0xFF1DB954)))),
         ],
       ),
     );
@@ -304,25 +228,15 @@ class _MainScreenState extends State<MainScreen> {
     if (result == true && nameController.text.trim().isNotEmpty) {
       final user = await SessionService.getUser();
       final userId = user?.id ?? 1;
-
-      final success = await LibraryService().createPlaylist(
-        userId,
-        nameController.text.trim(),
-        descController.text.trim(),
-      );
+      final success = await LibraryService().createPlaylist(userId, nameController.text.trim(), descController.text.trim());
 
       if (!mounted) return;
-
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Playlist berhasil dibuat!')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Playlist berhasil dibuat!')));
         setState(() => _currentIndex = 2);
         _libraryKey.currentState?.reload();
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Gagal bikin playlist')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal bikin playlist')));
       }
     }
   }
