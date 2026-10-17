@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      extendBody: true, // Agar konten bisa scroll di bawah navbar
+      extendBody: true, // KUNCI: Agar konten bisa scroll di bawah navbar
       body: IndexedStack(
         index: _currentIndex == 4 ? 0 : _currentIndex,
         children: tabs,
