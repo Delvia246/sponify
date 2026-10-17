@@ -506,7 +506,8 @@ class _HomeTabState extends State<HomeTab> {
                     ],
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                // Dikasih height 120 supaya lagu terakhir nggak ketutupan floating navbar
+                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
               ],
             ),
     );
