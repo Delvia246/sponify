@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/session_service.dart';
+import '../services/theme_service.dart';
 import 'login_screen.dart';
 import 'settings_screen.dart';
 
@@ -68,206 +69,224 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF121212),
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: Color(0xFF1DB954)),
-              )
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Header dengan back button
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: const Icon(Icons.arrow_back,
-                                color: Colors.white),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
+    final themeService = ThemeService();
 
-                    const SizedBox(height: 16),
-
-                    // Avatar besar
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF1DB954), Color(0xFF1ED760)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+    return AnimatedBuilder(
+      animation: themeService,
+      builder: (context, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF121212),
+          body: SafeArea(
+            child: _isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                        color: themeService.primaryColor),
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Header dengan back button
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: const Icon(Icons.arrow_back,
+                                    color: Colors.white),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.more_vert,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x661DB954),
-                            blurRadius: 20,
-                            spreadRadius: 2,
+
+                        const SizedBox(height: 16),
+
+                        // Avatar besar (Warna Dinamis)
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                themeService.primaryColor,
+                                themeService.primaryColor.withValues(alpha: 0.6)
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: themeService.primaryColor
+                                    .withValues(alpha: 0.4),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          (_user?.username.isNotEmpty ?? false)
-                              ? _user!.username[0].toUpperCase()
-                              : '?',
+                          child: Center(
+                            child: Text(
+                              (_user?.username.isNotEmpty ?? false)
+                                  ? _user!.username[0].toUpperCase()
+                                  : '?',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 56,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Username
+                        Text(
+                          _user?.username ?? 'User',
                           style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 56,
+                            color: Colors.white,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ),
 
-                    const SizedBox(height: 24),
+                        const SizedBox(height: 8),
 
-                    // Username
-                    Text(
-                      _user?.username ?? 'User',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Badge "Free Account"
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF282828),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'Free Account',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Info cards
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          _infoTile(
-                            icon: Icons.person_outline,
-                            label: 'Username',
-                            value: _user?.username ?? '-',
+                        // Badge "Free Account"
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF282828),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          const SizedBox(height: 12),
-                          _infoTile(
-                            icon: Icons.email_outlined,
-                            label: 'Email',
-                            value: _user?.email ?? '-',
-                          ),
-                          const SizedBox(height: 12),
-                          _infoTile(
-                            icon: Icons.badge_outlined,
-                            label: 'User ID',
-                            value: '#${_user?.id ?? '-'}',
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Menu tambahan
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.settings_outlined,
-                                color: Colors.white),
-                            title: const Text(
-                              'Pengaturan',
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 15),
-                            ),
-                            trailing: const Icon(Icons.chevron_right,
-                                color: Colors.grey),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SettingsScreen()),
-                              );
-                            },
-                          ),
-                          _menuTile(Icons.help_outline, 'Bantuan'),
-                          _menuTile(Icons.info_outline, 'Tentang Sponify'),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Tombol Logout
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: _handleLogout,
-                          icon: const Icon(Icons.logout,
-                              color: Colors.redAccent),
-                          label: const Text(
-                            'Logout',
+                          child: const Text(
+                            'Free Account',
                             style: TextStyle(
-                              color: Colors.redAccent,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            side: const BorderSide(color: Colors.redAccent),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                      ),
+
+                        const SizedBox(height: 32),
+
+                        // Info cards
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              _infoTile(
+                                icon: Icons.person_outline,
+                                label: 'Username',
+                                value: _user?.username ?? '-',
+                                themeColor: themeService.primaryColor,
+                              ),
+                              const SizedBox(height: 12),
+                              _infoTile(
+                                icon: Icons.email_outlined,
+                                label: 'Email',
+                                value: _user?.email ?? '-',
+                                themeColor: themeService.primaryColor,
+                              ),
+                              const SizedBox(height: 12),
+                              _infoTile(
+                                icon: Icons.badge_outlined,
+                                label: 'User ID',
+                                value: '#${_user?.id ?? '-'}',
+                                themeColor: themeService.primaryColor,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Menu tambahan
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.settings_outlined,
+                                    color: Colors.white),
+                                title: const Text(
+                                  'Pengaturan',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                trailing: const Icon(Icons.chevron_right,
+                                    color: Colors.grey),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SettingsScreen()),
+                                  );
+                                },
+                              ),
+                              _menuTile(Icons.help_outline, 'Bantuan'),
+                              _menuTile(
+                                  Icons.info_outline, 'Tentang Sponify'),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Tombol Logout
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: _handleLogout,
+                              icon: const Icon(Icons.logout,
+                                  color: Colors.redAccent),
+                              label: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
+                                side:
+                                    const BorderSide(color: Colors.redAccent),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Footer
+                        const Text(
+                          'Sponify v1.0.0',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
+
+                        const SizedBox(height: 24),
+                      ],
                     ),
-
-                    const SizedBox(height: 32),
-
-                    // Footer
-                    const Text(
-                      'Sponify v1.0.0',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-      ),
+                  ),
+          ),
+        );
+      },
     );
   }
 
@@ -275,6 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required String label,
     required String value,
+    required Color themeColor,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -287,10 +307,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF1DB954).withValues(alpha: 0.15),
+              color: themeColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xFF1DB954), size: 22),
+            child: Icon(icon, color: themeColor, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
