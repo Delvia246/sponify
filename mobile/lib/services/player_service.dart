@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+import 'dart:async'; // TAMBAHAN UNTUK TIMER
 import '../models/song.dart';
 import 'session_service.dart';
 
@@ -23,6 +24,12 @@ class PlayerService extends ChangeNotifier {
 
   bool _isShuffle = false;
   int _repeatMode = 0;
+
+  // ============ VARIABEL SLEEP TIMER ============
+  Timer? _sleepTimer;
+  int? _sleepTimerMinutes;
+  int? get sleepTimerMinutes => _sleepTimerMinutes;
+  // ==============================================
 
   static const String baseUrl = 'http://localhost/sponify/backend/api/';
 
@@ -46,6 +53,28 @@ class PlayerService extends ChangeNotifier {
     _repeatMode = (_repeatMode + 1) % 3;
     notifyListeners();
   }
+
+  // ============ FUNGSI SLEEP TIMER ============
+  void startSleepTimer(int minutes) {
+    _sleepTimer?.cancel();
+    _sleepTimerMinutes = minutes;
+    notifyListeners();
+
+    _sleepTimer = Timer(Duration(minutes: minutes), () {
+      _player.pause(); // Pause lagu saat waktu habis
+      _sleepTimerMinutes = null;
+      _sleepTimer = null;
+      notifyListeners();
+    });
+  }
+
+  void cancelSleepTimer() {
+    _sleepTimer?.cancel();
+    _sleepTimerMinutes = null;
+    _sleepTimer = null;
+    notifyListeners();
+  }
+  // ==============================================
 
   Future<void> playPlaylist(List<Song> songs, int startIndex) async {
     _playlist = songs;

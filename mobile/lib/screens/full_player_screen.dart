@@ -76,6 +76,54 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
     }
   }
 
+  // ============ FUNGSI SLEEP TIMER (BARU) ============
+  void _showSleepTimerSheet(BuildContext context) {
+    final playerService = PlayerService();
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: false,
+      backgroundColor: const Color(0xFF282828),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text('Sleep Timer', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              if (playerService.sleepTimerMinutes != null)
+                ListTile(
+                  leading: const Icon(Icons.timer_off, color: Colors.red),
+                  title: const Text('Matikan Timer', style: TextStyle(color: Colors.red)),
+                  onTap: () {
+                    playerService.cancelSleepTimer();
+                    Navigator.pop(context);
+                  },
+                ),
+              ...[5, 10, 15, 30, 45, 60].map((m) => ListTile(
+                leading: const Icon(Icons.timer, color: Colors.white),
+                title: Text('$m Menit', style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  playerService.startSleepTimer(m);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Sleep Timer aktif: $m menit')),
+                  );
+                },
+              )),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  // ====================================================
+
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString();
     final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
@@ -209,7 +257,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
 
                 const SizedBox(height: 16),
 
-                // ===== JUDUL & ARTIS + LIKE =====
+                // ===== JUDUL & ARTIS + TIMER & LIKE =====
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Row(
@@ -241,6 +289,20 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                           ],
                         ),
                       ),
+                      // TOMBOL SLEEP TIMER (BARU)
+                      IconButton(
+                        iconSize: 28,
+                        onPressed: () => _showSleepTimerSheet(context),
+                        icon: Icon(
+                          playerService.sleepTimerMinutes != null
+                              ? Icons.hourglass_top
+                              : Icons.hourglass_empty,
+                          color: playerService.sleepTimerMinutes != null
+                              ? const Color(0xFF1DB954)
+                              : Colors.white,
+                        ),
+                      ),
+                      // TOMBOL LIKE (ASLI)
                       IconButton(
                         iconSize: 30,
                         onPressed: _toggleLike,
@@ -330,7 +392,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // TOMBOL SHUFFLE (Diperbaiki)
+                      // TOMBOL SHUFFLE
                       IconButton(
                         iconSize: 28,
                         icon: Icon(
@@ -372,7 +434,7 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                             color: Colors.white),
                         onPressed: () => playerService.next(),
                       ),
-                      // TOMBOL REPEAT (Diperbaiki)
+                      // TOMBOL REPEAT
                       IconButton(
                         iconSize: 28,
                         icon: Icon(
