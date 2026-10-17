@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/session_service.dart';
 import 'login_screen.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -77,6 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : SingleChildScrollView(
                 child: Column(
                   children: [
+                    // Header dengan back button
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
                       child: Row(
@@ -98,6 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 16),
 
+                    // Avatar besar
                     Container(
                       width: 120,
                       height: 120,
@@ -132,6 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 24),
 
+                    // Username
                     Text(
                       _user?.username ?? 'User',
                       style: const TextStyle(
@@ -143,6 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 8),
 
+                    // Badge "Free Account"
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -162,6 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 32),
 
+                    // Info cards
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -189,11 +195,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 24),
 
+                    // Menu tambahan
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
-                          _menuTile(Icons.settings_outlined, 'Pengaturan'),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.settings_outlined,
+                                color: Colors.white),
+                            title: const Text(
+                              'Pengaturan',
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 15),
+                            ),
+                            trailing: const Icon(Icons.chevron_right,
+                                color: Colors.grey),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingsScreen()),
+                              );
+                            },
+                          ),
                           _menuTile(Icons.help_outline, 'Bantuan'),
                           _menuTile(Icons.info_outline, 'Tentang Sponify'),
                         ],
@@ -202,6 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 32),
 
+                    // Tombol Logout
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: SizedBox(
@@ -230,6 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     const SizedBox(height: 32),
 
+                    // Footer
                     const Text(
                       'Sponify v1.0.0',
                       style: TextStyle(color: Colors.grey, fontSize: 12),

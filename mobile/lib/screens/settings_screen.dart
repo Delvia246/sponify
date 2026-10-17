@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import '../services/theme_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeService = ThemeService();
+
+    // Daftar warna aksen yang bisa dipilih
+    final List<Color> colors = [
+      const Color(0xFF1DB954), // Hijau (Default)
+      const Color(0xFF8E24AA), // Ungu
+      const Color(0xFFE53935), // Merah
+      const Color(0xFF1E88E5), // Biru
+      const Color(0xFFFDD835), // Kuning
+      const Color(0xFFFF9800), // Oranye
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: SafeArea(
@@ -80,6 +93,64 @@ class SettingsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  // ==========================================
+                  // FITUR BARU: CUSTOM ACCENT COLOR (TEMA WARNA)
+                  // ==========================================
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Warna Aksen Aplikasi',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'Kustomisasi warna Sponify sesuai selera (Eksklusif Sponify).',
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
+                        const SizedBox(height: 16),
+                        AnimatedBuilder(
+                          animation: themeService,
+                          builder: (context, _) {
+                            return Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: colors.map((color) {
+                                final isSelected = themeService.primaryColor == color;
+                                return GestureDetector(
+                                  onTap: () => themeService.changeColor(color),
+                                  child: Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: isSelected ? Colors.white : Colors.transparent,
+                                        width: 3,
+                                      ),
+                                    ),
+                                    child: isSelected
+                                        ? const Icon(Icons.check, color: Colors.white, size: 20)
+                                        : null,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(color: Color(0xFF282828), height: 32),
+                  // ==========================================
 
                   _settingItem(
                     Icons.person_outline,
