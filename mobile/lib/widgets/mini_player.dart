@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../services/player_service.dart';
+import '../services/theme_service.dart'; // TAMBAHAN
 import '../screens/full_player_screen.dart';
 
 class MiniPlayer extends StatelessWidget {
@@ -135,8 +136,9 @@ class MiniPlayer extends StatelessWidget {
                         value: progress.clamp(0.0, 1.0),
                         minHeight: 2,
                         backgroundColor: const Color(0xFF4D4D4D),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF1DB954)),
+                        // WARNA PROGRESS BAR DINAMIS
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            ThemeService().primaryColor),
                       ),
                     );
                   },

@@ -4,12 +4,14 @@ import '../models/song.dart';
 import '../services/song_service.dart';
 import '../services/player_service.dart';
 import '../services/session_service.dart';
+import '../services/theme_service.dart'; // TAMBAHAN
 import '../widgets/phone_frame.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
 import 'liked_songs_screen.dart';
 import 'stats_screen.dart';
 import 'mood_screen.dart';
+import 'settings_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -153,7 +155,13 @@ class _HomeTabState extends State<HomeTab> {
                   child: Align(alignment: Alignment.centerLeft, child: Text('Rilis terbaru dari artis, podcast, dan acara yang kamu ikuti.', style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 13))),
                 ),
                 const SizedBox(height: 12),
-                const TabBar(indicatorColor: Color(0xFF1DB954), labelColor: Colors.white, unselectedLabelColor: Color(0xFFB3B3B3), tabs: [Tab(text: 'Musik'), Tab(text: 'Podcast & Acara')]),
+                // Warna indikator tab diubah jadi dinamis
+                TabBar(
+                  indicatorColor: ThemeService().primaryColor, 
+                  labelColor: Colors.white, 
+                  unselectedLabelColor: const Color(0xFFB3B3B3), 
+                  tabs: const [Tab(text: 'Musik'), Tab(text: 'Podcast & Acara')]
+                ),
                 Expanded(
                   child: TabBarView(
                     children: [
@@ -242,7 +250,10 @@ class _HomeTabState extends State<HomeTab> {
               _menuItem(Icons.workspace_premium_outlined, 'Upgrade ke Premium', () => Navigator.pop(context)),
               _menuItem(Icons.help_outline, 'Dukungan', () => Navigator.pop(context)),
               _menuItem(Icons.lock_outline, 'Sesi pribadi', () => Navigator.pop(context)),
-              _menuItem(Icons.settings_outlined, 'Pengaturan', () => Navigator.pop(context)),
+              _menuItem(Icons.settings_outlined, 'Pengaturan', () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen()));
+              }),
               _menuItem(Icons.refresh, 'Perbarui Sponify sekarang', () => Navigator.pop(context)),
               const Divider(color: Color(0xFF3E3E3E), height: 1),
               ListTile(
@@ -279,7 +290,10 @@ class _HomeTabState extends State<HomeTab> {
         content: const Text('Yakin mau keluar dari akun ini?', style: TextStyle(color: Colors.grey)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal', style: TextStyle(color: Colors.grey))),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Keluar', style: TextStyle(color: Color(0xFF1DB954)))),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true), 
+            child: Text('Keluar', style: TextStyle(color: ThemeService().primaryColor)) // Dinamis
+          ),
         ],
       ),
     );
@@ -309,13 +323,11 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    // PERHATIKAN: Tidak ada Scaffold dan SafeArea di sini.
-    // Langsung return RefreshIndicator.
     return RefreshIndicator(
-      color: const Color(0xFF1DB954),
+      color: ThemeService().primaryColor, // Dinamis
       onRefresh: _loadSongs,
       child: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF1DB954)))
+          ? Center(child: CircularProgressIndicator(color: ThemeService().primaryColor)) // Dinamis
           : CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
@@ -339,7 +351,7 @@ class _HomeTabState extends State<HomeTab> {
                                   width: 34,
                                   height: 34,
                                   decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                                  child: const Icon(Icons.music_note, color: Color(0xFF1DB954), size: 22),
+                                  child: Icon(Icons.music_note, color: ThemeService().primaryColor, size: 22), // Dinamis
                                 ),
                                 const SizedBox(width: 8),
                                 const Text('Sponify', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
@@ -354,7 +366,12 @@ class _HomeTabState extends State<HomeTab> {
                               child: Container(
                                 width: 36,
                                 height: 36,
-                                decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Color(0xFF1DB954), Color(0xFF1ED760)])),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle, 
+                                  gradient: LinearGradient(
+                                    colors: [ThemeService().primaryColor, ThemeService().primaryColor.withValues(alpha: 0.7)] // Dinamis
+                                  )
+                                ),
                                 child: const Icon(Icons.person, color: Colors.black, size: 22),
                               ),
                             ),
@@ -379,7 +396,10 @@ class _HomeTabState extends State<HomeTab> {
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(color: selected ? const Color(0xFF1DB954) : const Color(0xFF2A2A2A), borderRadius: BorderRadius.circular(20)),
+                              decoration: BoxDecoration(
+                                color: selected ? ThemeService().primaryColor : const Color(0xFF2A2A2A), // Dinamis
+                                borderRadius: BorderRadius.circular(20)
+                              ),
                               child: Text(_filters[i], style: TextStyle(color: selected ? Colors.black : Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
                             ),
                           ),
@@ -506,7 +526,6 @@ class _HomeTabState extends State<HomeTab> {
                     ],
                   ),
                 ),
-                // Dikasih height 120 supaya lagu terakhir nggak ketutupan floating navbar
                   const SliverToBoxAdapter(child: SizedBox(height: 120)),
               ],
             ),

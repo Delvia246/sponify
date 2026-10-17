@@ -5,6 +5,7 @@ import 'library_tab.dart';
 import 'premium_tab.dart';
 import '../services/library_service.dart';
 import '../services/session_service.dart';
+import '../services/theme_service.dart';
 import '../widgets/mini_player.dart';
 
 class MainScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      extendBody: true, // KUNCI: Agar konten bisa scroll di bawah navbar
+      extendBody: true, // Agar konten bisa scroll di bawah navbar
       body: IndexedStack(
         index: _currentIndex == 4 ? 0 : _currentIndex,
         children: tabs,
@@ -68,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
                   },
                   backgroundColor: Colors.transparent,
                   elevation: 0,
-                  selectedItemColor: Colors.white,
+                  selectedItemColor: ThemeService().primaryColor, // Dinamis
                   unselectedItemColor: const Color(0xFFB3B3B3),
                   selectedFontSize: 10,
                   unselectedFontSize: 10,
