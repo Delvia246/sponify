@@ -54,9 +54,12 @@ class _HomeTabState extends State<HomeTab> {
     await PlayerService().playPlaylist(_songs, safeIndex);
   }
 
-  // ==========================================
-  // FITUR ASLI KAMU (MODAL & MENU)
-  // ==========================================
+  void _showComingSoon(String title) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Fitur $title segera hadir'), duration: const Duration(seconds: 1)),
+    );
+  }
+
   void _showListeningActivity() {
     showModalBottomSheet(
       context: context,
@@ -82,11 +85,7 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(height: 16),
                 const Text('Izinkan teman dan pengikut di Sponify melihat apa yang kamu dengarkan.', style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 14, height: 1.4)),
                 const SizedBox(height: 24),
-                _activityRow(),
-                _activityRow(),
-                _activityRow(),
-                const SizedBox(height: 24),
-                const Text('Buka Pengaturan > Aktivitas mendengarkan dan wawasan, lalu aktifkan Aktivitas mendengarkan. Kamu bisa menonaktifkannya kapan saja.', style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 13, height: 1.4)),
+                _activityRow(), _activityRow(), _activityRow(),
                 const SizedBox(height: 24),
                 Center(
                   child: SizedBox(
@@ -199,9 +198,7 @@ class _HomeTabState extends State<HomeTab> {
                 borderRadius: BorderRadius.circular(6),
                 child: CachedNetworkImage(
                   imageUrl: song.coverUrl,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.cover,
+                  width: 70, height: 70, fit: BoxFit.cover,
                   placeholder: (c, u) => Container(width: 70, height: 70, color: const Color(0xFF282828)),
                   errorWidget: (c, u, e) => Container(width: 70, height: 70, color: const Color(0xFF282828), child: const Icon(Icons.music_note, color: Colors.grey)),
                 ),
@@ -214,8 +211,6 @@ class _HomeTabState extends State<HomeTab> {
                     Text(song.title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
                     Text(song.artist, style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 4),
-                    Text('Single • ${song.album}', style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 11)),
                   ],
                 ),
               ),
@@ -312,12 +307,6 @@ class _HomeTabState extends State<HomeTab> {
   void _openLikedSongs() => Navigator.push(context, MaterialPageRoute(builder: (context) => const LikedSongsScreen()));
   void _openStats() => Navigator.push(context, MaterialPageRoute(builder: (context) => const StatsScreen()));
   void _openMood() => Navigator.push(context, MaterialPageRoute(builder: (context) => const MoodScreen()));
-  
-  void _showComingSoon(String title) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Fitur $title segera hadir'), duration: const Duration(seconds: 1)),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -331,7 +320,6 @@ class _HomeTabState extends State<HomeTab> {
               ? Center(child: CircularProgressIndicator(color: ThemeService().primaryColor))
               : CustomScrollView(
                   slivers: [
-                    // ===== HEADER (LENGKAP DENGAN IKON LONCENG & 3 ORANG) =====
                     SliverToBoxAdapter(
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -350,8 +338,7 @@ class _HomeTabState extends State<HomeTab> {
                                 Row(
                                   children: [
                                     Container(
-                                      width: 34,
-                                      height: 34,
+                                      width: 34, height: 34,
                                       decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
                                       child: Icon(Icons.music_note, color: ThemeService().primaryColor, size: 22),
                                     ),
@@ -360,17 +347,13 @@ class _HomeTabState extends State<HomeTab> {
                                   ],
                                 ),
                                 const Spacer(),
-                                // Ikon Lonceng
                                 IconButton(iconSize: 24, icon: const Icon(Icons.notifications_none, color: Colors.white), onPressed: _showNewReleases),
-                                // Ikon 3 Orang
                                 IconButton(iconSize: 24, icon: const Icon(Icons.people_outline, color: Colors.white), onPressed: _showListeningActivity),
                                 const SizedBox(width: 4),
-                                // Avatar Profil
                                 GestureDetector(
                                   onTap: _showProfileMenu,
                                   child: Container(
-                                    width: 36,
-                                    height: 36,
+                                    width: 36, height: 36,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       gradient: LinearGradient(
@@ -389,7 +372,6 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
 
-                    // ===== FILTER CHIPS =====
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -411,8 +393,7 @@ class _HomeTabState extends State<HomeTab> {
                                     _filters[i],
                                     style: TextStyle(
                                       color: selected ? Colors.black : Colors.white,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13, fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
@@ -423,7 +404,6 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
 
-                    // ===== KONTEN FILTER =====
                     if (_filterIndex == 0) ..._buildAllContent(),
                     if (_filterIndex == 1) ..._buildMusicContent(),
                     if (_filterIndex == 2) _buildPodcastContent(),
@@ -436,9 +416,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ==========================================
-  // TAMPILAN ALL (GABUNGAN)
-  // ==========================================
   List<Widget> _buildAllContent() {
     return [
       SliverToBoxAdapter(
@@ -452,12 +429,12 @@ class _HomeTabState extends State<HomeTab> {
             crossAxisSpacing: 8,
             childAspectRatio: 3.5,
             children: [
-              _quickCard('Liked Songs', const Color(0xFF4B22F4), Icons.favorite, _openLikedSongs),
-              _quickCard('Daily Mix 1', const Color(0xFFE91E63), Icons.radio, () => _showComingSoon('Daily Mix')),
-              _quickCard('Chill Vibes', const Color(0xFF00BCD4), Icons.nightlight_round, () => _showComingSoon('Chill Vibes')),
-              _quickCard('Statistik', const Color(0xFFFF5722), Icons.trending_up, _openStats),
-              _quickCard('Mood', const Color(0xFF9C27B0), Icons.mood, _openMood),
-              _quickCard('New Releases', const Color(0xFF4CAF50), Icons.new_releases, () => _showComingSoon('New Releases')),
+              GestureDetector(onTap: _openLikedSongs, child: _quickCard('Liked Songs', const Color(0xFF4B22F4), Icons.favorite)),
+              _quickCard('Daily Mix 1', const Color(0xFFE91E63), Icons.radio),
+              _quickCard('Chill Vibes', const Color(0xFF00BCD4), Icons.nightlight_round),
+              GestureDetector(onTap: _openStats, child: _quickCard('Statistik', const Color(0xFFFF5722), Icons.trending_up)),
+              GestureDetector(onTap: _openMood, child: _quickCard('Mood', const Color(0xFF9C27B0), Icons.mood)),
+              _quickCard('New Releases', const Color(0xFF4CAF50), Icons.new_releases),
             ],
           ),
         ),
@@ -474,7 +451,6 @@ class _HomeTabState extends State<HomeTab> {
               height: 200,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _songs.length > 5 ? 5 : _songs.length,
                 itemBuilder: (context, i) {
@@ -482,25 +458,21 @@ class _HomeTabState extends State<HomeTab> {
                   return GestureDetector(
                     onTap: () => _playSong(i),
                     child: Container(
-                      width: 150,
-                      margin: const EdgeInsets.only(right: 12),
+                      width: 150, margin: const EdgeInsets.only(right: 12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(6),
                             child: CachedNetworkImage(
-                              imageUrl: song.coverUrl,
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.cover,
+                              imageUrl: song.coverUrl, width: 150, height: 150, fit: BoxFit.cover,
                               placeholder: (c, u) => Container(width: 150, height: 150, color: const Color(0xFF282828)),
                               errorWidget: (c, u, e) => Container(width: 150, height: 150, color: const Color(0xFF282828), child: const Icon(Icons.music_note, color: Colors.grey)),
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(song.title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text(song.artist, style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+                          Text(song.title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                          Text(song.artist, style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
                         ],
                       ),
                     ),
@@ -523,7 +495,6 @@ class _HomeTabState extends State<HomeTab> {
               height: 180,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _songs.length,
                 itemBuilder: (context, i) {
@@ -531,8 +502,7 @@ class _HomeTabState extends State<HomeTab> {
                   return GestureDetector(
                     onTap: () => _playSong(i),
                     child: Container(
-                      width: 130,
-                      margin: const EdgeInsets.only(right: 12),
+                      width: 130, margin: const EdgeInsets.only(right: 12),
                       decoration: BoxDecoration(color: const Color(0xFF282828), borderRadius: BorderRadius.circular(6)),
                       padding: const EdgeInsets.all(8),
                       child: Column(
@@ -541,10 +511,7 @@ class _HomeTabState extends State<HomeTab> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: CachedNetworkImage(
-                              imageUrl: song.coverUrl,
-                              width: 114,
-                              height: 114,
-                              fit: BoxFit.cover,
+                              imageUrl: song.coverUrl, width: 114, height: 114, fit: BoxFit.cover,
                               placeholder: (c, u) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F)),
                               errorWidget: (c, u, e) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F), child: const Icon(Icons.music_note, color: Colors.grey)),
                             ),
@@ -564,9 +531,6 @@ class _HomeTabState extends State<HomeTab> {
     ];
   }
 
-  // ==========================================
-  // TAMPILAN MUSIC (SESUAI TEMANMU)
-  // ==========================================
   List<Widget> _buildMusicContent() {
     return [
       const SliverToBoxAdapter(
@@ -586,17 +550,9 @@ class _HomeTabState extends State<HomeTab> {
             leading: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: CachedNetworkImage(
-                imageUrl: song.coverUrl,
-                width: 52,
-                height: 52,
-                fit: BoxFit.cover,
+                imageUrl: song.coverUrl, width: 52, height: 52, fit: BoxFit.cover,
                 placeholder: (c, u) => Container(width: 52, height: 52, color: placeholderColor.withValues(alpha: 0.5)),
-                errorWidget: (c, u, e) => Container(
-                  width: 52, 
-                  height: 52, 
-                  color: placeholderColor.withValues(alpha: 0.5),
-                  child: const Icon(Icons.music_note, color: Colors.white),
-                ),
+                errorWidget: (c, u, e) => Container(width: 52, height: 52, color: placeholderColor.withValues(alpha: 0.5), child: const Icon(Icons.music_note, color: Colors.white)),
               ),
             ),
             title: Text(song.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -606,27 +562,9 @@ class _HomeTabState extends State<HomeTab> {
           );
         }, childCount: _songs.length),
       ),
-      SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: OutlinedButton.icon(
-            onPressed: () => _showComingSoon('Halaman Musik Lengkap'),
-            icon: const Icon(Icons.arrow_forward, color: Colors.white),
-            label: const Text('Buka Halaman Musik Lengkap', style: TextStyle(color: Colors.white)),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.grey),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            ),
-          ),
-        ),
-      ),
     ];
   }
 
-  // ==========================================
-  // TAMPILAN PODCASTS (SESUAI TEMANMU)
-  // ==========================================
   Widget _buildPodcastContent() {
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -640,21 +578,13 @@ class _HomeTabState extends State<HomeTab> {
               const SizedBox(height: 20),
               const Text('Belum ada podcast', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text(
-                'Podcast akan muncul di sini. Cek kembali nanti ya!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13, height: 1.5),
-              ),
+              Text('Podcast akan muncul di sini. Cek kembali nanti ya!', textAlign: TextAlign.center, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 13, height: 1.5)),
               const SizedBox(height: 24),
               OutlinedButton.icon(
                 onPressed: () => _showComingSoon('Halaman Podcast'),
                 icon: const Icon(Icons.explore_outlined, color: Colors.white),
                 label: const Text('Buka Halaman Podcast', style: TextStyle(color: Colors.white)),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.grey),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                ),
+                style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.grey), padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))),
               ),
             ],
           ),
@@ -663,33 +593,21 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ==========================================
-  // WIDGET KARTU
-  // ==========================================
-  Widget _quickCard(String title, Color color, IconData icon, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(color: const Color(0xFF2A2A2A), borderRadius: BorderRadius.circular(6)),
-        child: Row(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.horizontal(left: Radius.circular(6))),
-              child: Icon(icon, color: Colors.white, size: 26),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+  Widget _quickCard(String title, Color color, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(color: const Color(0xFF2A2A2A), borderRadius: BorderRadius.circular(6)),
+      child: Row(
+        children: [
+          Container(
+            width: 56, height: 56,
+            decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.horizontal(left: Radius.circular(6))),
+            child: Icon(icon, color: Colors.white, size: 26),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700), maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
+        ],
       ),
     );
   }
