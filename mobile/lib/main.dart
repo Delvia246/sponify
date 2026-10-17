@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'screens/welcome_screen.dart'; // IMPORT BARU
@@ -55,8 +56,9 @@ class SponifyApp extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
+          home: const LoginScreen(),
         );
       },
       home: const WelcomeScreen(), // UBAH DARI LOGIN SCREEN

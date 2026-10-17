@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PremiumTab extends StatelessWidget {
+class PremiumTab extends StatefulWidget {
   const PremiumTab({super.key});
 
   @override
@@ -93,18 +93,34 @@ class PremiumTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(26),
                   ),
                 ),
-                child: const Text(
-                  'Dapatkan Premium Standard',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: _benefits
+                      .map((b) => _benefitCard(
+                            b['icon'] as IconData,
+                            b['title'] as String,
+                            b['desc'] as String,
+                          ))
+                      .toList(),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Persyaratan berlaku.\nLihat paket lainnya di bawah ini.',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 12,
+
+              const SizedBox(height: 24),
+
+              // === PRICING SECTION ===
+              const Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+                child: Text(
+                  'Pilih Paket Kamu',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 32),
@@ -194,45 +210,15 @@ class PremiumTab extends StatelessWidget {
     );
   }
 
-  Widget _featureRow(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white, size: 22),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _planCard(
-    BuildContext context, {
-    String? badge,
-    Color? badgeColor,
-    required String title,
-    required Color titleColor,
-    required String price,
-    required List<String> features,
-    required Color buttonColor,
-    required Color buttonTextColor,
-    required String buttonText,
-    String? footer,
-  }) {
+  Widget _benefitCard(IconData icon, String title, String desc) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F1F1F),
+        color: const Color(0xFF282828),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
           if (badge != null) ...[
             Container(
@@ -316,19 +302,16 @@ class PremiumTab extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      f,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        height: 1.4,
-                      ),
-                    ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  desc,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),

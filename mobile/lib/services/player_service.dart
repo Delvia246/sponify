@@ -14,7 +14,13 @@ enum PlayerRepeatMode { off, all, one }
 class PlayerService extends ChangeNotifier {
   static final PlayerService _instance = PlayerService._internal();
   factory PlayerService() => _instance;
-  PlayerService._internal();
+  PlayerService._internal() {
+    _player.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        next();
+      }
+    });
+  }
 
   final AudioPlayer player = AudioPlayer();
 
@@ -22,7 +28,7 @@ class PlayerService extends ChangeNotifier {
   int _currentIndex = 0;
 
   bool _isShuffle = false;
-  PlayerRepeatMode _repeatMode = PlayerRepeatMode.off;
+  int _repeatMode = 0;
 
   // === QUEUE ===
   final List<Song> _queue = [];
@@ -48,7 +54,8 @@ class PlayerService extends ChangeNotifier {
 
   bool get isPlaying => player.playing;
   bool get isShuffle => _isShuffle;
-  PlayerRepeatMode get repeatMode => _repeatMode;
+  int get repeatMode => _repeatMode;
+  Stream<Duration> get positionStream => _player.positionStream;
 
   Stream<Duration> get positionStream => player.positionStream;
   Stream<Duration?> get durationStream => player.durationStream;
@@ -137,10 +144,14 @@ class PlayerService extends ChangeNotifier {
   }
 
   Future<void> togglePlayPause() async {
-    if (player.playing) {
-      await player.pause();
+    if (_player.playing) {
+      await _player.pause();
     } else {
-      await player.play();
+      if (_player.audioSource == null) {
+        await _playCurrent();
+      } else {
+        _player.play();
+      }
     }
     notifyListeners();
   }
@@ -155,22 +166,21 @@ class PlayerService extends ChangeNotifier {
       notifyListeners();
       return;
     }
-
-    if (_isShuffle && _playlist.length > 1) {
-      int randomIndex;
-      do {
-        randomIndex = DateTime.now().millisecondsSinceEpoch % _playlist.length;
-      } while (randomIndex == _currentIndex);
-      _currentIndex = randomIndex;
+    if (_isShuffle) {
+      if (_playlist.length > 1) {
+        int newIndex = _currentIndex;
+        while (newIndex == _currentIndex) {
+          newIndex = Random().nextInt(_playlist.length);
+        }
+        _currentIndex = newIndex;
+      }
     } else {
-      _currentIndex++;
-      if (_currentIndex >= _playlist.length) {
-        if (_repeatMode == PlayerRepeatMode.all) {
+      if (_currentIndex < _playlist.length - 1) {
+        _currentIndex++;
+      } else {
+        if (_repeatMode == 1) {
           _currentIndex = 0;
         } else {
-          _currentIndex = _playlist.length - 1;
-          await player.pause();
-          notifyListeners();
           return;
         }
       }
@@ -185,25 +195,22 @@ class PlayerService extends ChangeNotifier {
       debugPrint('Error next: $e');
     }
     notifyListeners();
+    await _playCurrent();
   }
 
   Future<void> previous() async {
-    if (_playlist.isEmpty) return;
-
-    if (player.position.inSeconds > 3) {
-      await player.seek(Duration.zero);
-      return;
-    }
-
-    if (_isShuffle && _playlist.length > 1) {
-      int randomIndex;
-      do {
-        randomIndex = DateTime.now().millisecondsSinceEpoch % _playlist.length;
-      } while (randomIndex == _currentIndex);
-      _currentIndex = randomIndex;
+    if (_isShuffle) {
+      if (_playlist.length > 1) {
+        int newIndex = _currentIndex;
+        while (newIndex == _currentIndex) {
+          newIndex = Random().nextInt(_playlist.length);
+        }
+        _currentIndex = newIndex;
+      }
     } else {
-      _currentIndex--;
-      if (_currentIndex < 0) {
+      if (_currentIndex > 0) {
+        _currentIndex--;
+      } else if (_repeatMode == 1) {
         _currentIndex = _playlist.length - 1;
       }
     }
@@ -217,10 +224,11 @@ class PlayerService extends ChangeNotifier {
       debugPrint('Error previous: $e');
     }
     notifyListeners();
+    await _playCurrent();
   }
 
   Future<void> seek(Duration position) async {
-    await player.seek(position);
+    await _player.seek(position);
   }
 
   void toggleShuffle() {

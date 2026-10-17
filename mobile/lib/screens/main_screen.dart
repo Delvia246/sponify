@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'home_tab.dart';
 import 'search_tab.dart';
 import 'library_tab.dart';
@@ -32,6 +31,7 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
+      extendBody: true, // KUNCI: Agar konten bisa scroll di bawah navbar
       body: IndexedStack(
         index: _currentIndex == 4
             ? 0
@@ -119,6 +119,7 @@ class _MainScreenState extends State<MainScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      useRootNavigator: false,
       builder: (sheetContext) => GestureDetector(
         onTap: () => Navigator.pop(sheetContext),
         behavior: HitTestBehavior.opaque,
@@ -136,9 +137,7 @@ class _MainScreenState extends State<MainScreen> {
                     padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
                     decoration: const BoxDecoration(
                       color: Color(0xFF1F1F1F),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
                     ),
                     child: SafeArea(
                       top: false,

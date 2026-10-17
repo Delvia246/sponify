@@ -157,20 +157,28 @@ class _HomeTabState extends State<HomeTab> {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(width: 8),
+                                const Text('Sponify', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
                               ],
                             ),
-                            const SizedBox(height: 20),
-                            Text(
-                              _getGreeting(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
+                            const Spacer(),
+                            IconButton(iconSize: 24, icon: const Icon(Icons.notifications_none, color: Colors.white), onPressed: _showNewReleases),
+                            IconButton(iconSize: 24, icon: const Icon(Icons.people_outline, color: Colors.white), onPressed: _showListeningActivity),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: _showProfileMenu,
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Color(0xFF1DB954), Color(0xFF1ED760)])),
+                                child: const Icon(Icons.person, color: Colors.black, size: 22),
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        Text(_getGreeting(), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
+                      ],
                     ),
 
                     // === FILTER CHIPS ===
@@ -205,11 +213,14 @@ class _HomeTabState extends State<HomeTab> {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                  ),
+                                    const SizedBox(height: 8),
+                                    Text(song.title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                    Text(song.artist, style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  ],
                                 ),
                               ),
                             );
-                          }),
+                          },
                         ),
                       ),
                     ),
@@ -222,8 +233,59 @@ class _HomeTabState extends State<HomeTab> {
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
                   ],
                 ),
-        ),
-      ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(16, 24, 16, 12),
+                        child: Text('Recommended for you', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                      ),
+                      SizedBox(
+                        height: 180,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: _songs.length,
+                          itemBuilder: (context, i) {
+                            final song = _songs[i];
+                            return GestureDetector(
+                              onTap: () => _playSong(i),
+                              child: Container(
+                                width: 130,
+                                margin: const EdgeInsets.only(right: 12),
+                                decoration: BoxDecoration(color: const Color(0xFF282828), borderRadius: BorderRadius.circular(6)),
+                                padding: const EdgeInsets.all(8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: CachedNetworkImage(
+                                        imageUrl: song.coverUrl,
+                                        width: 114,
+                                        height: 114,
+                                        fit: BoxFit.cover,
+                                        placeholder: (c, u) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F)),
+                                        errorWidget: (c, u, e) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F), child: const Icon(Icons.music_note, color: Colors.grey)),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(song.album, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Dikasih height 120 supaya lagu terakhir nggak ketutupan floating navbar
+                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
+              ],
+            ),
     );
   }
 
