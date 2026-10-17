@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../services/liked_service.dart';
 import '../services/session_service.dart';
 
@@ -25,24 +26,37 @@ class _LikeButtonState extends State<LikeButton> {
     final user = await SessionService.getUser();
     if (user == null) return;
     final liked = await LikedService().isLiked(user.id, widget.songId);
-    if (mounted) setState(() { _isLiked = liked; _isLoading = false; });
+    if (mounted) {
+      setState(() {
+        _isLiked = liked;
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _toggle() async {
     final user = await SessionService.getUser();
     if (user == null) return;
+
     final res = await LikedService().toggleLike(user.id, widget.songId);
-    if (res != null && mounted) {
+
+    // FIX: Hapus 'res != null' karena res sudah pasti bertipe bool
+    if (mounted) {
       setState(() => _isLiked = res);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return SizedBox(width: widget.size, height: widget.size);
+    if (_isLoading) {
+      return SizedBox(width: widget.size, height: widget.size);
+    }
     return IconButton(
-      icon: Icon(_isLiked ? Icons.favorite : Icons.favorite_border,
-          color: _isLiked ? const Color(0xFF1DB954) : Colors.white, size: widget.size),
+      icon: Icon(
+        _isLiked ? Icons.favorite : Icons.favorite_border,
+        color: _isLiked ? const Color(0xFF1DB954) : Colors.white,
+        size: widget.size,
+      ),
       onPressed: _toggle,
     );
   }

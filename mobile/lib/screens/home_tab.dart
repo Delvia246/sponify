@@ -5,7 +5,7 @@ import '../services/song_service.dart';
 import '../services/player_service.dart';
 import '../widgets/phone_frame.dart';
 import '../widgets/profile_menu_sheet.dart';
-import '../widgets/song_artwork.dart'; // IMPORT BARU
+import '../widgets/song_artwork.dart';
 import 'quick_playlist_screen.dart';
 import 'music_screen.dart';
 import 'podcast_screen.dart';
@@ -92,7 +92,6 @@ class _HomeTabState extends State<HomeTab> {
                 )
               : CustomScrollView(
                   slivers: [
-                    // === HEADER ===
                     SliverToBoxAdapter(
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -157,31 +156,21 @@ class _HomeTabState extends State<HomeTab> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                const Text('Sponify', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
                               ],
                             ),
-                            const Spacer(),
-                            IconButton(iconSize: 24, icon: const Icon(Icons.notifications_none, color: Colors.white), onPressed: _showNewReleases),
-                            IconButton(iconSize: 24, icon: const Icon(Icons.people_outline, color: Colors.white), onPressed: _showListeningActivity),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: _showProfileMenu,
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Color(0xFF1DB954), Color(0xFF1ED760)])),
-                                child: const Icon(Icons.person, color: Colors.black, size: 22),
+                            const SizedBox(height: 20),
+                            Text(
+                              _getGreeting(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20),
-                        Text(_getGreeting(), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
-                      ],
+                      ),
                     ),
-
-                    // === FILTER CHIPS ===
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -213,88 +202,27 @@ class _HomeTabState extends State<HomeTab> {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(song.title, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                    Text(song.artist, style: const TextStyle(color: Color(0xFFB3B3B3), fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                  ],
+                                  ),
                                 ),
                               ),
                             );
-                          },
+                          }),
                         ),
                       ),
                     ),
-
-                    // === KONTEN BERDASARKAN FILTER ===
                     if (_filterIndex == 0) ..._buildAllContent(),
                     if (_filterIndex == 1) ..._buildMusicContent(),
                     if (_filterIndex == 2) _buildPodcastContent(),
-
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
                   ],
                 ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 24, 16, 12),
-                        child: Text('Recommended for you', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                      ),
-                      SizedBox(
-                        height: 180,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: _songs.length,
-                          itemBuilder: (context, i) {
-                            final song = _songs[i];
-                            return GestureDetector(
-                              onTap: () => _playSong(i),
-                              child: Container(
-                                width: 130,
-                                margin: const EdgeInsets.only(right: 12),
-                                decoration: BoxDecoration(color: const Color(0xFF282828), borderRadius: BorderRadius.circular(6)),
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: CachedNetworkImage(
-                                        imageUrl: song.coverUrl,
-                                        width: 114,
-                                        height: 114,
-                                        fit: BoxFit.cover,
-                                        placeholder: (c, u) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F)),
-                                        errorWidget: (c, u, e) => Container(width: 114, height: 114, color: const Color(0xFF1F1F1F), child: const Icon(Icons.music_note, color: Colors.grey)),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(song.album, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Dikasih height 120 supaya lagu terakhir nggak ketutupan floating navbar
-                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
-              ],
-            ),
+        ),
+      ),
     );
   }
 
-  // ============================================
-  // FILTER "ALL"
-  // ============================================
   List<Widget> _buildAllContent() {
     return [
-      // QUICK PICKS
       SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -371,8 +299,6 @@ class _HomeTabState extends State<HomeTab> {
           ),
         ),
       ),
-
-      // TOP MIXES
       SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,8 +318,7 @@ class _HomeTabState extends State<HomeTab> {
               height: 200,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                clipBehavior:
-                    Clip.none, // FIX: Cegah card pertama terpotong di Web
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _songs.length > 5 ? 5 : _songs.length,
                 itemBuilder: (context, i) {
@@ -409,7 +334,6 @@ class _HomeTabState extends State<HomeTab> {
                           Hero(
                             tag: 'cover_${song.id}',
                             child: SongArtwork(
-                              // GANTI: SongArtwork
                               imageUrl: song.coverUrl,
                               size: 150,
                               borderRadius: 6,
@@ -445,8 +369,6 @@ class _HomeTabState extends State<HomeTab> {
           ],
         ),
       ),
-
-      // RECOMMENDED
       SliverToBoxAdapter(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,7 +388,7 @@ class _HomeTabState extends State<HomeTab> {
               height: 180,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                clipBehavior: Clip.none, // FIX
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: _songs.length,
                 itemBuilder: (context, i) {
@@ -485,7 +407,6 @@ class _HomeTabState extends State<HomeTab> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SongArtwork(
-                            // GANTI: SongArtwork
                             imageUrl: song.coverUrl,
                             size: 114,
                             borderRadius: 4,
@@ -514,9 +435,6 @@ class _HomeTabState extends State<HomeTab> {
     ];
   }
 
-  // ============================================
-  // FILTER "MUSIC"
-  // ============================================
   List<Widget> _buildMusicContent() {
     return [
       const SliverToBoxAdapter(
@@ -541,7 +459,6 @@ class _HomeTabState extends State<HomeTab> {
               vertical: 2,
             ),
             leading: SongArtwork(
-              // GANTI: SongArtwork
               imageUrl: song.coverUrl,
               size: 52,
               borderRadius: 4,
@@ -597,9 +514,6 @@ class _HomeTabState extends State<HomeTab> {
     ];
   }
 
-  // ============================================
-  // FILTER "PODCASTS"
-  // ============================================
   Widget _buildPodcastContent() {
     return SliverFillRemaining(
       hasScrollBody: false,

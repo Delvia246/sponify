@@ -6,19 +6,21 @@ import '../screens/whats_new_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/stats_screen.dart';
 import '../screens/profile_screen.dart';
-import '../screens/welcome_screen.dart'; // IMPORT BARU
+import '../screens/welcome_screen.dart';
 import 'phone_frame.dart';
 
 class ProfileMenuSheet extends StatelessWidget {
-  const ProfileMenuSheet({super.key});
+  final BuildContext parentContext;
+
+  const ProfileMenuSheet({super.key, required this.parentContext});
 
   static void show(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => GestureDetector(
-        onTap: () => Navigator.pop(context),
+      builder: (sheetContext) => GestureDetector(
+        onTap: () => Navigator.pop(sheetContext),
         behavior: HitTestBehavior.opaque,
         child: Container(
           color: Colors.black.withValues(alpha: 0.5),
@@ -28,7 +30,7 @@ class ProfileMenuSheet extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 430),
               child: GestureDetector(
                 onTap: () {},
-                child: const ProfileMenuSheet(),
+                child: ProfileMenuSheet(parentContext: context),
               ),
             ),
           ),
@@ -55,7 +57,6 @@ class ProfileMenuSheet extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Handle
                 Container(
                   margin: const EdgeInsets.only(top: 8, bottom: 12),
                   width: 40,
@@ -66,12 +67,12 @@ class ProfileMenuSheet extends StatelessWidget {
                   ),
                 ),
 
-                // === PROFILE HEADER ===
+                // PROFILE HEADER
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) => phoneWrap(const ProfileScreen()),
                       ),
@@ -128,7 +129,7 @@ class ProfileMenuSheet extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // === TAMBAH AKUN ===
+                // TAMBAH AKUN
                 ListTile(
                   leading: Container(
                     width: 32,
@@ -144,10 +145,10 @@ class ProfileMenuSheet extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 15),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
-                    // Arahkan ke WelcomeScreen untuk login dengan akun baru
+                    Navigator.pop(context); // Tutup bottom sheet
+                    // FIX: Gunakan navigasi standar
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) => const WelcomeScreen(),
                       ),
@@ -157,7 +158,7 @@ class ProfileMenuSheet extends StatelessWidget {
 
                 const Divider(color: Color(0xFF3E3E3E), height: 1),
 
-                // === MENU UTAMA ===
+                // MENU UTAMA
                 _menuItem(
                   context,
                   icon: Icons.history,
@@ -165,7 +166,7 @@ class ProfileMenuSheet extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) =>
                             phoneWrap(const RecentlyPlayedScreen()),
@@ -181,7 +182,7 @@ class ProfileMenuSheet extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) => phoneWrap(const StatsScreen()),
                       ),
@@ -196,7 +197,7 @@ class ProfileMenuSheet extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) => phoneWrap(const WhatsNewScreen()),
                       ),
@@ -210,7 +211,7 @@ class ProfileMenuSheet extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                      context,
+                      parentContext,
                       MaterialPageRoute(
                         builder: (context) => phoneWrap(const SettingsScreen()),
                       ),
@@ -220,7 +221,7 @@ class ProfileMenuSheet extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // === ACTIVITIES ===
+                // ACTIVITIES
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -246,7 +247,7 @@ class ProfileMenuSheet extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                // === PESAN SECTION ===
+                // PESAN SECTION
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -271,7 +272,6 @@ class ProfileMenuSheet extends StatelessWidget {
                   ),
                 ),
 
-                // Pesan dummy
                 _messageItem(
                   'dinzy',
                   'Mengirimkan • 29 Jul',

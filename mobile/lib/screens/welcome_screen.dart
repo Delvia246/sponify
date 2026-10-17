@@ -8,6 +8,9 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Mengecek apakah ini halaman pertama aplikasi atau halaman yang dibuka dari menu lain
+    final isFirstRoute = ModalRoute.of(context)?.isFirst ?? true;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -26,14 +29,20 @@ class WelcomeScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Top Bar (Close button - opsional, untuk simulasi)
+                // Top Bar
                 Align(
                   alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed:
-                        () {}, // Bisa diarahkan ke Home jika user sudah login
-                  ),
+                  child: !isFirstRoute
+                      ? IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () {
+                            // Menutup halaman ini dan kembali ke profil/home
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      : const SizedBox(
+                          height: 48,
+                        ), // Jika halaman pertama, sembunyikan tombol X
                 ),
 
                 const Spacer(),

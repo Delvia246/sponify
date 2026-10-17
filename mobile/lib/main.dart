@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import 'screens/welcome_screen.dart'; // IMPORT BARU
+import 'screens/welcome_screen.dart';
 
 void main() {
   runApp(const SponifyApp());
@@ -32,7 +31,6 @@ class SponifyApp extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Container(
-                  // === FRAME HP (muncul 1x di seluruh app) ===
                   width: 430,
                   height: 880,
                   decoration: BoxDecoration(
@@ -56,12 +54,11 @@ class SponifyApp extends StatelessWidget {
                   ),
                 ),
               ),
-            );
-          },
-          home: const LoginScreen(),
+            ),
+          ),
         );
       },
-      home: const WelcomeScreen(), // UBAH DARI LOGIN SCREEN
+      home: const WelcomeScreen(),
     );
   }
 }
