@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import '../models/song.dart';
 import '../services/song_service.dart';
 import '../services/player_service.dart';
 import '../services/session_service.dart';
 import '../widgets/phone_frame.dart';
-<<<<<<< HEAD
-import '../widgets/profile_menu_sheet.dart';
-import 'quick_playlist_screen.dart';
-=======
 import 'profile_screen.dart';
 import 'login_screen.dart';
 import 'liked_songs_screen.dart';
 import 'stats_screen.dart';
 import 'mood_screen.dart';
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -53,29 +47,6 @@ class _HomeTabState extends State<HomeTab> {
     return 'Selamat malam';
   }
 
-<<<<<<< HEAD
-  void _openProfile() {
-    ProfileMenuSheet.show(context);
-  }
-
-  Future<void> _playSong(int index) async {
-    if (_songs.isEmpty) return;
-    final safeIndex = index % _songs.length;
-    await PlayerService().playPlaylist(_songs, safeIndex);
-  }
-
-  void _openQuickPlaylist(String title, Color color, IconData icon) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => phoneWrap(
-          QuickPlaylistScreen(
-            title: title,
-            color: color,
-            icon: icon,
-            songs: _songs,
-=======
-  // ============ FITUR 1: Activity Modal ============
   void _showListeningActivity() {
     showModalBottomSheet(
       context: context,
@@ -211,7 +182,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ============ FITUR 2: Notification Panel ============
   void _showNewReleases() {
     showModalBottomSheet(
       context: context,
@@ -285,13 +255,10 @@ class _HomeTabState extends State<HomeTab> {
                 ),
               ],
             ),
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
           ),
         ),
       ),
     );
-<<<<<<< HEAD
-=======
   }
 
   Widget _buildNewReleases() {
@@ -380,7 +347,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ============ FITUR 3: Profile Dropdown Menu ============
   void _showProfileMenu() {
     showModalBottomSheet(
       context: context,
@@ -508,10 +474,8 @@ class _HomeTabState extends State<HomeTab> {
 
   void _playSong(int index) async {
     await PlayerService().playPlaylist(_songs, index);
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
   }
 
-  // ============ FITUR 4: Liked Songs ============
   void _openLikedSongs() {
     Navigator.push(
       context,
@@ -521,7 +485,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ============ FITUR 5: Stats ============
   void _openStats() {
     Navigator.push(
       context,
@@ -531,7 +494,6 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // ============ FITUR 6: Mood ============
   void _openMood() {
     Navigator.push(
       context,
@@ -555,7 +517,6 @@ class _HomeTabState extends State<HomeTab> {
                 )
               : CustomScrollView(
                   slivers: [
-                    // === HEADER BARU dengan 3 IKON ===
                     SliverToBoxAdapter(
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -570,10 +531,6 @@ class _HomeTabState extends State<HomeTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
-<<<<<<< HEAD
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-=======
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
                               children: [
                                 Row(
                                   children: [
@@ -626,7 +583,7 @@ class _HomeTabState extends State<HomeTab> {
                                       gradient: LinearGradient(
                                         colors: [
                                           Color(0xFF1DB954),
-                                          Color(0xFF1ED760),
+                                          Color(0xFF1ED760)
                                         ],
                                       ),
                                     ),
@@ -652,8 +609,6 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       ),
                     ),
-
-                    // === FILTER ===
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -663,13 +618,13 @@ class _HomeTabState extends State<HomeTab> {
                             return Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: GestureDetector(
-                                onTap: () => setState(() => _filterIndex = i),
+                                onTap: () =>
+                                    setState(() => _filterIndex = i),
                                 child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
+                                  duration:
+                                      const Duration(milliseconds: 200),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
+                                      horizontal: 16, vertical: 8),
                                   decoration: BoxDecoration(
                                     color: selected
                                         ? const Color(0xFF1DB954)
@@ -693,12 +648,6 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       ),
                     ),
-
-<<<<<<< HEAD
-                    // === QUICK PICKS ===
-=======
-                    // === GRID (4 kartu bisa dipencet) ===
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -710,68 +659,6 @@ class _HomeTabState extends State<HomeTab> {
                           crossAxisSpacing: 8,
                           childAspectRatio: 3.5,
                           children: [
-<<<<<<< HEAD
-                            _quickCard(
-                              'Liked Songs',
-                              const Color(0xFF4B22F4),
-                              Icons.favorite,
-                              () => _openQuickPlaylist(
-                                'Liked Songs',
-                                const Color(0xFF4B22F4),
-                                Icons.favorite,
-                              ),
-                            ),
-                            _quickCard(
-                              'Daily Mix 1',
-                              const Color(0xFFE91E63),
-                              Icons.radio,
-                              () => _openQuickPlaylist(
-                                'Daily Mix 1',
-                                const Color(0xFFE91E63),
-                                Icons.radio,
-                              ),
-                            ),
-                            _quickCard(
-                              'Chill Vibes',
-                              const Color(0xFF00BCD4),
-                              Icons.nightlight_round,
-                              () => _openQuickPlaylist(
-                                'Chill Vibes',
-                                const Color(0xFF00BCD4),
-                                Icons.nightlight_round,
-                              ),
-                            ),
-                            _quickCard(
-                              'Trending',
-                              const Color(0xFFFF5722),
-                              Icons.trending_up,
-                              () => _openQuickPlaylist(
-                                'Trending',
-                                const Color(0xFFFF5722),
-                                Icons.trending_up,
-                              ),
-                            ),
-                            _quickCard(
-                              'Discover',
-                              const Color(0xFF9C27B0),
-                              Icons.explore,
-                              () => _openQuickPlaylist(
-                                'Discover',
-                                const Color(0xFF9C27B0),
-                                Icons.explore,
-                              ),
-                            ),
-                            _quickCard(
-                              'New Releases',
-                              const Color(0xFF4CAF50),
-                              Icons.new_releases,
-                              () => _openQuickPlaylist(
-                                'New Releases',
-                                const Color(0xFF4CAF50),
-                                Icons.new_releases,
-                              ),
-                            ),
-=======
                             GestureDetector(
                               onTap: _openLikedSongs,
                               child: _quickCard('Liked Songs',
@@ -793,13 +680,10 @@ class _HomeTabState extends State<HomeTab> {
                             ),
                             _quickCard('New Releases', const Color(0xFF4CAF50),
                                 Icons.new_releases),
->>>>>>> 094ffd4caf5ec8463c97c4b3ac48c7775484fdb2
                           ],
                         ),
                       ),
                     ),
-
-                    // === YOUR TOP MIXES ===
                     SliverToBoxAdapter(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -819,10 +703,10 @@ class _HomeTabState extends State<HomeTab> {
                             height: 200,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              itemCount: _songs.length > 5 ? 5 : _songs.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount:
+                                  _songs.length > 5 ? 5 : _songs.length,
                               itemBuilder: (context, i) {
                                 final song = _songs[i];
                                 return GestureDetector(
@@ -834,34 +718,28 @@ class _HomeTabState extends State<HomeTab> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Hero(
-                                          tag: 'cover_${song.id}',
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              6,
-                                            ),
-                                            child: CachedNetworkImage(
-                                              imageUrl: song.coverUrl,
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: CachedNetworkImage(
+                                            imageUrl: song.coverUrl,
+                                            width: 150,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                            placeholder: (c, u) => Container(
                                               width: 150,
                                               height: 150,
-                                              fit: BoxFit.cover,
-                                              placeholder: (c, u) => Container(
-                                                width: 150,
-                                                height: 150,
-                                                color: const Color(0xFF282828),
-                                              ),
-                                              errorWidget: (c, u, e) =>
-                                                  Container(
-                                                    width: 150,
-                                                    height: 150,
-                                                    color: const Color(
-                                                      0xFF282828,
-                                                    ),
-                                                    child: const Icon(
-                                                      Icons.music_note,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
+                                              color:
+                                                  const Color(0xFF282828),
+                                            ),
+                                            errorWidget: (c, u, e) => Container(
+                                              width: 150,
+                                              height: 150,
+                                              color:
+                                                  const Color(0xFF282828),
+                                              child: const Icon(
+                                                  Icons.music_note,
+                                                  color: Colors.grey),
                                             ),
                                           ),
                                         ),
@@ -870,7 +748,7 @@ class _HomeTabState extends State<HomeTab> {
                                           song.title,
                                           style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 13,
+                                            fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                           ),
                                           maxLines: 1,
@@ -880,7 +758,7 @@ class _HomeTabState extends State<HomeTab> {
                                           song.artist,
                                           style: const TextStyle(
                                             color: Color(0xFFB3B3B3),
-                                            fontSize: 11,
+                                            fontSize: 12,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -895,8 +773,6 @@ class _HomeTabState extends State<HomeTab> {
                         ],
                       ),
                     ),
-
-                    // === RECOMMENDED ===
                     SliverToBoxAdapter(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -916,9 +792,8 @@ class _HomeTabState extends State<HomeTab> {
                             height: 180,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               itemCount: _songs.length,
                               itemBuilder: (context, i) {
                                 final song = _songs[i];
@@ -926,10 +801,12 @@ class _HomeTabState extends State<HomeTab> {
                                   onTap: () => _playSong(i),
                                   child: Container(
                                     width: 130,
-                                    margin: const EdgeInsets.only(right: 12),
+                                    margin:
+                                        const EdgeInsets.only(right: 12),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFF282828),
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius:
+                                          BorderRadius.circular(6),
                                     ),
                                     padding: const EdgeInsets.all(8),
                                     child: Column(
@@ -937,9 +814,8 @@ class _HomeTabState extends State<HomeTab> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                           child: CachedNetworkImage(
                                             imageUrl: song.coverUrl,
                                             width: 114,
@@ -948,16 +824,17 @@ class _HomeTabState extends State<HomeTab> {
                                             placeholder: (c, u) => Container(
                                               width: 114,
                                               height: 114,
-                                              color: const Color(0xFF1F1F1F),
+                                              color:
+                                                  const Color(0xFF1F1F1F),
                                             ),
                                             errorWidget: (c, u, e) => Container(
                                               width: 114,
                                               height: 114,
-                                              color: const Color(0xFF1F1F1F),
+                                              color:
+                                                  const Color(0xFF1F1F1F),
                                               child: const Icon(
-                                                Icons.music_note,
-                                                color: Colors.grey,
-                                              ),
+                                                  Icons.music_note,
+                                                  color: Colors.grey),
                                             ),
                                           ),
                                         ),
@@ -982,7 +859,6 @@ class _HomeTabState extends State<HomeTab> {
                         ],
                       ),
                     ),
-
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
                   ],
                 ),
@@ -991,47 +867,39 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _quickCard(
-    String title,
-    Color color,
-    IconData icon,
-    VoidCallback onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF2A2A2A),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: const BorderRadius.horizontal(
-                  left: Radius.circular(6),
-                ),
-              ),
-              child: Icon(icon, color: Colors.white, size: 26),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+  Widget _quickCard(String title, Color color, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2A2A),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(6),
               ),
             ),
-          ],
-        ),
+            child: Icon(icon, color: Colors.white, size: 26),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }
