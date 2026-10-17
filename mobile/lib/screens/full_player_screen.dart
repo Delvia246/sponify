@@ -330,10 +330,16 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // TOMBOL SHUFFLE (Diperbaiki)
                       IconButton(
                         iconSize: 28,
-                        icon: const Icon(Icons.shuffle, color: Colors.white),
-                        onPressed: () {},
+                        icon: Icon(
+                          Icons.shuffle,
+                          color: playerService.isShuffle
+                              ? const Color(0xFF1DB954)
+                              : Colors.white,
+                        ),
+                        onPressed: () => playerService.toggleShuffle(),
                       ),
                       IconButton(
                         iconSize: 40,
@@ -366,10 +372,18 @@ class _FullPlayerScreenState extends State<FullPlayerScreen> {
                             color: Colors.white),
                         onPressed: () => playerService.next(),
                       ),
+                      // TOMBOL REPEAT (Diperbaiki)
                       IconButton(
                         iconSize: 28,
-                        icon: const Icon(Icons.repeat, color: Colors.white),
-                        onPressed: () {},
+                        icon: Icon(
+                          playerService.repeatMode == 2
+                              ? Icons.repeat_one
+                              : Icons.repeat,
+                          color: playerService.repeatMode > 0
+                              ? const Color(0xFF1DB954)
+                              : Colors.white,
+                        ),
+                        onPressed: () => playerService.cycleRepeatMode(),
                       ),
                     ],
                   ),
